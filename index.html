@@ -467,7 +467,28 @@
       font-size: 1rem;
     }
 
-    .monthly-detail-toolbar input {
+    .monthly-detail-filters {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 0.6rem;
+    }
+
+    .monthly-detail-filter {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .monthly-detail-filter label {
+      font-size: 0.7rem;
+    }
+
+    .monthly-detail-filter input[type="date"] {
+      width: 160px;
+    }
+
+    .monthly-detail-filter input[type="search"] {
       width: min(100%, 360px);
     }
 
@@ -686,7 +707,20 @@
         </div>
         <div class="monthly-detail-toolbar">
           <h3 id="monthlyDetailCount">Memuat transaksi...</h3>
-          <input type="search" id="monthlyDetailSearch" placeholder="Cari resi, pengirim, penerima, atau kota..." />
+          <div class="monthly-detail-filters">
+            <div class="monthly-detail-filter">
+              <label for="monthlyDetailDateFrom">Tanggal Dari</label>
+              <input type="date" id="monthlyDetailDateFrom" />
+            </div>
+            <div class="monthly-detail-filter">
+              <label for="monthlyDetailDateTo">Tanggal Sampai</label>
+              <input type="date" id="monthlyDetailDateTo" />
+            </div>
+            <div class="monthly-detail-filter">
+              <label for="monthlyDetailSearch">Pencarian</label>
+              <input type="search" id="monthlyDetailSearch" placeholder="Cari resi, pengirim, penerima, atau kota..." />
+            </div>
+          </div>
         </div>
         <div class="table-responsive">
           <table class="monthly-table">
@@ -792,6 +826,8 @@
       document.getElementById('reportTahun').addEventListener('change', loadReportPetugas);
       document.getElementById('reportNipNik').addEventListener('change', loadCurrentReportPage);
       document.getElementById('monthlyDetailSearch').addEventListener('input', renderDetailedTransactions);
+      document.getElementById('monthlyDetailDateFrom').addEventListener('input', renderDetailedTransactions);
+      document.getElementById('monthlyDetailDateTo').addEventListener('input', renderDetailedTransactions);
       fetchRekapData();
     });
 
@@ -1062,10 +1098,18 @@
 
     function renderDetailedTransactions() {
       const query = document.getElementById('monthlyDetailSearch').value.toLowerCase().trim();
-      const filtered = monthlyDetailData.filter(row =>
-        [row.noResi, row.pengirim, row.penerima, row.kotaTujuan]
-          .some(value => String(value || '').toLowerCase().includes(query))
-      );
+      const dateFrom = document.getElementById('monthlyDetailDateFrom').value;
+      const dateTo = document.getElementById('monthlyDetailDateTo').value;
+      const invalidDateRange = dateFrom && dateTo && dateFrom > dateTo;
+      const filtered = invalidDateRange ? [] : monthlyDetailData.filter(row => {
+        const transactionDate = getDateInputValue(row.tglKirim);
+        const matchesDateRange = transactionDate &&
+          (!dateFrom || transactionDate >= dateFrom) &&
+          (!dateTo || transactionDate <= dateTo);
+        const matchesQuery = [row.noResi, row.pengirim, row.penerima, row.kotaTujuan]
+          .some(value => String(value || '').toLowerCase().includes(query));
+        return matchesDateRange && matchesQuery;
+      });
       const tbody = document.getElementById('monthlyDetailRows');
       tbody.innerHTML = '';
       document.getElementById('monthlyDetailCount').textContent =
@@ -1078,7 +1122,9 @@
         td.className = 'center';
         td.style.padding = '1.5rem';
         td.style.color = 'var(--muted)';
-        td.textContent = query
+        td.textContent = invalidDateRange
+          ? 'Tanggal awal tidak boleh setelah tanggal akhir.'
+          : (query || dateFrom || dateTo)
           ? 'Tidak ada rincian transaksi yang cocok dengan pencarian.'
           : 'Tidak ada rincian transaksi pada periode ini.';
         tr.appendChild(td);
@@ -1109,6 +1155,19 @@
         });
         tbody.appendChild(tr);
       });
+    }
+
+    function getDateInputValue(value) {
+      if (!value) return '';
+      const dateString = String(value);
+      const isoDate = dateString.match(/^\d{4}-\d{2}-\d{2}/);
+      if (isoDate) return isoDate[0];
+
+      const date = new Date(value);
+      if (isNaN(date.getTime())) return '';
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${date.getFullYear()}-${month}-${day}`;
     }
 
     async function fetchRekapData() {
