@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Transaksi Karyawan — Data TRX Oranger</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #ea580c;       /* Oranye Pos / Oranger */
+      --primary-dark: #c2410c;
+      --secondary: #1e293b;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --success: #16a34a;
+      --info: #0284c7;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--secondary) 0%, #0f172a 100%);
+      color: #fff;
+      padding: 1.25rem 2rem;
+      border-bottom: 4px solid var(--primary);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    header h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    header p {
+      font-size: 0.85rem;
+      color: #cbd5e1;
+    }
+
+    .badge-status {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.4rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #22c55e;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1320px;
+      margin: 1.5rem auto;
+      padding: 0 1.25rem;
+    }
+
+    /* Filter Bar */
+    .filter-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: flex-end;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      min-width: 160px;
+    }
+
+    .form-group.grow {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    select, input {
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: var(--text);
+      background: #fff;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .btn {
+      padding: 0.58rem 1.1rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background: #fff;
+      color: var(--secondary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover {
+      background: #f1f5f9;
+    }
+
+    .btn-sm {
+      padding: 0.35rem 0.7rem;
+      font-size: 0.8rem;
+    }
+
+    /* KPI Summary Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.15rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      border-left: 4px solid var(--primary);
+    }
+
+    .kpi-card.blue { border-left-color: var(--info); }
+    .kpi-card.green { border-left-color: var(--success); }
+    .kpi-card.dark { border-left-color: var(--secondary); }
+
+    .kpi-title {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+
+    .kpi-value {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .kpi-sub {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Chart Section */
+    .chart-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .section-header h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .chart-wrapper {
+      position: relative;
+      height: 260px;
+      width: 100%;
+    }
+
+    /* Table */
+    .table-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .table-top {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    th, td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    th {
+      background: #f1f5f9;
+      font-weight: 600;
+      color: var(--secondary);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+    }
+
+    tbody tr:hover {
+      background-color: #fff7ed;
+    }
+
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+    .font-bold { font-weight: 700; }
+
+    .tag-layanan {
+      display: inline-block;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      margin-right: 0.25rem;
+    }
+
+    /* Loading & Empty States */
+    .state-box {
+      padding: 3rem 1rem;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #e2e8f0;
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 0.75rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Modal Detail Resi */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 1000;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal-box {
+      background: #fff;
+      width: 100%;
+      max-width: 1050px;
+      max-height: 88vh;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+      padding: 1rem 1.5rem;
+      background: var(--secondary);
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-body {
+      padding: 1.25rem;
+      overflow-y: auto;
+    }
+
+    #monthlyReportView[hidden] {
+      display: none !important;
+    }
+
+    .monthly-filter {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .monthly-field {
+      display: flex;
+      flex: 1 1 180px;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .monthly-report-card {
+      overflow: hidden;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .monthly-report-heading {
+      padding: 1rem 1.25rem;
+      background: #fff200;
+      color: #111827;
+    }
+
+    .monthly-report-heading h2 {
+      margin-bottom: 0.75rem;
+      text-align: center;
+      font-size: 1rem;
+      text-transform: uppercase;
+    }
+
+    .monthly-report-meta {
+      display: grid;
+      grid-template-columns: minmax(130px, 180px) minmax(0, 1fr);
+      gap: 0.15rem 0.75rem;
+      font-weight: 700;
+    }
+
+    .monthly-table {
+      width: 100%;
+      border-collapse: collapse;
+      white-space: nowrap;
+    }
+
+    .monthly-table th,
+    .monthly-table td {
+      padding: 0.65rem 0.75rem;
+      border: 1px solid var(--border);
+    }
+
+    .monthly-table th {
+      background: #ffd966;
+      text-transform: none;
+    }
+
+    .monthly-table .number {
+      text-align: right;
+    }
+
+    .monthly-table .center {
+      text-align: center;
+    }
+
+    .monthly-report-message {
+      min-height: 1.5rem;
+      margin: 0 0 0.75rem;
+      color: var(--muted);
+    }
+
+    .monthly-report-message.error {
+      color: #dc2626;
+    }
+
+    .monthly-detail-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .monthly-detail-toolbar h3 {
+      font-size: 1rem;
+    }
+
+    .monthly-detail-toolbar input {
+      width: min(100%, 360px);
+    }
+
+    @media (max-width: 600px) {
+      .monthly-report-heading {
+        padding: 0.85rem;
+      }
+
+      .monthly-report-meta {
+        grid-template-columns: 115px minmax(0, 1fr);
+        font-size: 0.88rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <h1>Dashboard Performa & Transaksi Karyawan</h1>
+      <p>Monitoring Produksi Loket & Petugas Entri — Database DATA TRX ORANGER</p>
+    </div>
+    <div class="badge-status">
+      <span class="dot"></span>
+      <span id="statusText">Siap Memuat Data</span>
+    </div>
+  </header>
+
+  <div class="container" id="dashboardView">
+    <!-- Filter Kontrol -->
+    <div class="filter-card">
+      <div class="form-group">
+        <label for="filterBulan">Bulan Transaksi</label>
+        <select id="filterBulan">
+          <option value="">Semua Bulan</option>
+          <option value="1">Januari</option>
+          <option value="2">Februari</option>
+          <option value="3">Maret</option>
+          <option value="4">April</option>
+          <option value="5">Mei</option>
+          <option value="6">Juni</option>
+          <option value="7">Juli</option>
+          <option value="8">Agustus</option>
+          <option value="9">September</option>
+          <option value="10">Oktober</option>
+          <option value="11">November</option>
+          <option value="12">Desember</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="filterTahun">Tahun</label>
+        <select id="filterTahun">
+          <option value="">Semua Tahun</option>
+          <option value="2025">2025</option>
+          <option value="2026" selected>2026</option>
+          <option value="2027">2027</option>
+        </select>
+      </div>
+
+      <div class="form-group grow">
+        <label for="searchPetugas">Pilih Petugas (NIP / NIK)</label>
+        <select id="searchPetugas" onchange="renderDashboard()">
+          <option value="">Semua Petugas</option>
+        </select>
+      </div>
+
+      <button class="btn btn-primary" onclick="fetchRekapData()">🔄 Muat Data</button>
+      <button class="btn btn-outline" type="button" onclick="showMonthlyReport()">📅 Laporan Bulanan</button>
+      <button class="btn btn-outline" onclick="exportToCSV()">📥 Export CSV</button>
+    </div>
+
+    <!-- Ringkasan KPI -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-title">Total Pendapatan (Total Bea)</div>
+        <div class="kpi-value" id="kpiPendapatan">Rp 0</div>
+        <div class="kpi-sub" id="kpiOngkir">Ongkir: Rp 0 | HTNB: Rp 0</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-title">Total Produksi Resi</div>
+        <div class="kpi-value" id="kpiResi">0 Resi</div>
+        <div class="kpi-sub" id="kpiJenis">Paket: 0 | Dokumen: 0</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-title">Total Berat Kiriman</div>
+        <div class="kpi-value" id="kpiBerat">0,00 Kg</div>
+        <div class="kpi-sub" id="kpiRataBerat">Rata-rata: 0,00 Kg / resi</div>
+      </div>
+      <div class="kpi-card dark">
+        <div class="kpi-title">Petugas Entri Aktif</div>
+        <div class="kpi-value" id="kpiPetugas">0 Orang</div>
+        <div class="kpi-sub" id="kpiTopPetugas">Tertinggi: -</div>
+      </div>
+    </div>
+
+    <!-- Grafik Perbandingan -->
+    <div class="chart-card">
+      <div class="section-header">
+        <h2>Grafik Total Pendapatan per Petugas Entri</h2>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="revenueChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Tabel Rekap Karyawan -->
+    <div class="table-card">
+      <div class="table-top">
+        <h2 style="font-size: 1.05rem;">Rekapitulasi Transaksi per Karyawan</h2>
+        <span style="font-size: 0.82rem; color: var(--muted);" id="tableCount">Menampilkan 0 data</span>
+      </div>
+
+      <div id="loadingState" class="state-box">
+        <div class="spinner"></div>
+        <p>Mengambil data dari Google Sheets...</p>
+      </div>
+
+      <div class="table-responsive" id="tableContainer" style="display: none;">
+        <table>
+          <thead>
+            <tr>
+              <th class="text-center">No</th>
+              <th>NIP / NIK</th>
+              <th>Nama Petugas Entri</th>
+              <th class="text-right">Total Resi</th>
+              <th class="text-right">Paket</th>
+              <th class="text-right">Dokumen</th>
+              <th class="text-right">Berat (Kg)</th>
+              <th class="text-right">Total Ongkir</th>
+              <th class="text-right">Total Bea</th>
+              <th>Rincian Layanan</th>
+              <th class="text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="rekapTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" id="monthlyReportView" hidden>
+    <div class="monthly-filter">
+      <div class="monthly-field">
+        <label for="reportBulan">Bulan Transaksi</label>
+        <select id="reportBulan">
+          <option value="1">Januari</option>
+          <option value="2">Februari</option>
+          <option value="3">Maret</option>
+          <option value="4">April</option>
+          <option value="5">Mei</option>
+          <option value="6">Juni</option>
+          <option value="7">Juli</option>
+          <option value="8">Agustus</option>
+          <option value="9">September</option>
+          <option value="10">Oktober</option>
+          <option value="11">November</option>
+          <option value="12">Desember</option>
+        </select>
+      </div>
+      <div class="monthly-field">
+        <label for="reportTahun">Tahun</label>
+        <select id="reportTahun"></select>
+      </div>
+      <div class="monthly-field grow">
+        <label for="reportNipNik">Pilih NIP / NIK</label>
+        <select id="reportNipNik">
+          <option value="">Memuat daftar petugas...</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" type="button" onclick="showTransactionDetails()">📋 Rincian Transaksi</button>
+      <button class="btn btn-outline" type="button" onclick="showDashboard()">← Kembali ke Dashboard</button>
+    </div>
+
+    <div id="monthlySummaryPage">
+      <p class="monthly-report-message" id="monthlyReportMessage" role="status" aria-live="polite"></p>
+
+      <div class="monthly-report-card">
+        <div class="monthly-report-heading">
+          <h2>Rekap Transaksi Pengiriman Dokumen dan Paket</h2>
+          <div class="monthly-report-meta">
+            <span>Nama Mitra</span><span id="reportNama">: -</span>
+            <span>ID Mitra</span><span id="reportId">: -</span>
+            <span>Periode Transaksi</span><span id="reportPeriode">: -</span>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="monthly-table">
+            <thead>
+              <tr>
+                <th class="center">No</th>
+                <th>Tgl Transaksi</th>
+                <th class="number">Jml Transaksi</th>
+                <th class="number">Biaya Pengiriman</th>
+                <th class="number">PPN</th>
+                <th class="number">HTNB</th>
+                <th class="number">Total Biaya Pengiriman</th>
+              </tr>
+            </thead>
+            <tbody id="monthlyReportRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="transactionDetailsPage" hidden>
+      <p class="monthly-report-message" id="monthlyDetailMessage" role="status" aria-live="polite"></p>
+      <div class="monthly-report-card">
+        <div class="monthly-report-heading">
+          <h2>Rincian Transaksi Pengiriman</h2>
+          <div class="monthly-report-meta">
+            <span>Nama Mitra</span><span id="detailReportNama">: -</span>
+            <span>ID Mitra</span><span id="detailReportId">: -</span>
+            <span>Periode Transaksi</span><span id="detailReportPeriode">: -</span>
+          </div>
+        </div>
+        <div class="monthly-detail-toolbar">
+          <h3 id="monthlyDetailCount">Memuat transaksi...</h3>
+          <input type="search" id="monthlyDetailSearch" placeholder="Cari resi, pengirim, penerima, atau kota..." />
+        </div>
+        <div class="table-responsive">
+          <table class="monthly-table">
+            <thead>
+              <tr>
+                <th class="center">No</th>
+                <th>No Resi</th>
+                <th>Tgl Transaksi</th>
+                <th>Layanan</th>
+                <th>Jenis</th>
+                <th>Pengirim</th>
+                <th>Penerima</th>
+                <th>Kota Tujuan</th>
+                <th class="number">Berat (Kg)</th>
+                <th class="number">Total Bea</th>
+              </tr>
+            </thead>
+            <tbody id="monthlyDetailRows"></tbody>
+          </table>
+        </div>
+      </div>
+      <div style="margin-top:0.75rem;">
+        <button class="btn btn-outline" type="button" onclick="showMonthlySummary()">← Kembali ke Rekap Bulanan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Detail Transaksi Karyawan -->
+  <div class="modal-backdrop" id="detailModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div>
+          <h3 id="modalTitle" style="font-size: 1.1rem;">Detail Transaksi Petugas</h3>
+          <p id="modalSubtitle" style="font-size: 0.82rem; color: #cbd5e1;">NIP: -</p>
+        </div>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 0.85rem; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+          <input type="text" id="searchModalResi" placeholder="Filter No Resi, Pengirim, atau Kota Tujuan..." style="max-width: 340px; width: 100%;" oninput="filterDetailTable()" />
+          <span id="modalCount" style="font-size: 0.85rem; color: var(--muted); font-weight: 600;">0 transaksi</span>
+        </div>
+
+        <div id="modalLoading" class="state-box">
+          <div class="spinner"></div>
+          <p>Memuat daftar resi karyawan...</p>
+        </div>
+
+        <div class="table-responsive" id="modalTableWrapper" style="display: none;">
+          <table>
+            <thead>
+              <tr>
+                <th>No Resi</th>
+                <th>Tgl Kirim</th>
+                <th>Layanan</th>
+                <th>Jenis</th>
+                <th>Pengirim</th>
+                <th>Penerima</th>
+                <th>Kota Tujuan</th>
+                <th class="text-right">Berat</th>
+                <th class="text-right">Total Bea</th>
+              </tr>
+            </thead>
+            <tbody id="detailTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // URL Web App Google Apps Script yang terhubung ke Spreadsheet
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxxUxUUcYfS4tIzQlC6aBR9QEGQX7FXycVUFX7oInNTEBvum_gpkkvm08ozDDOUqP8r/exec';
+
+    let allRekapData = [];
+    let currentDetailData = [];
+    let chartInstance = null;
+    let monthlyOptionsLoaded = false;
+    let monthlyRequestId = 0;
+    let monthlyDetailData = [];
+    let monthlyDetailRequestId = 0;
+
+    const formatRupiah = (angka) => {
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+      }).format(angka || 0);
+    };
+
+    const formatAngka = (angka, desimal = 0) => {
+      return new Intl.NumberFormat('id-ID', {
+        minimumFractionDigits: desimal,
+        maximumFractionDigits: desimal
+      }).format(angka || 0);
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const currentDate = new Date();
+      document.getElementById('reportBulan').value = String(currentDate.getMonth() + 1);
+      populateReportYears(currentDate.getFullYear());
+      document.getElementById('reportBulan').addEventListener('change', loadReportPetugas);
+      document.getElementById('reportTahun').addEventListener('change', loadReportPetugas);
+      document.getElementById('reportNipNik').addEventListener('change', loadCurrentReportPage);
+      document.getElementById('monthlyDetailSearch').addEventListener('input', renderDetailedTransactions);
+      fetchRekapData();
+    });
+
+    function showMonthlyReport() {
+      document.getElementById('dashboardView').hidden = true;
+      document.getElementById('monthlyReportView').hidden = false;
+      window.scrollTo(0, 0);
+
+      if (monthlyOptionsLoaded) {
+        loadCurrentReportPage();
+      } else {
+        loadReportPetugas();
+      }
+    }
+
+    function showTransactionDetails() {
+      document.getElementById('monthlySummaryPage').hidden = true;
+      document.getElementById('transactionDetailsPage').hidden = false;
+      window.scrollTo(0, 0);
+      loadDetailedTransactions();
+    }
+
+    function showMonthlySummary() {
+      document.getElementById('transactionDetailsPage').hidden = true;
+      document.getElementById('monthlySummaryPage').hidden = false;
+      window.scrollTo(0, 0);
+      loadMonthlyReport();
+    }
+
+    function loadCurrentReportPage() {
+      if (document.getElementById('transactionDetailsPage').hidden) {
+        loadMonthlyReport();
+      } else {
+        loadDetailedTransactions();
+      }
+    }
+
+    function showDashboard() {
+      document.getElementById('monthlyReportView').hidden = true;
+      document.getElementById('dashboardView').hidden = false;
+      window.scrollTo(0, 0);
+    }
+
+    function populateReportYears(currentYear) {
+      const select = document.getElementById('reportTahun');
+      select.innerHTML = '';
+      for (let year = currentYear - 5; year <= currentYear + 1; year++) {
+        const option = document.createElement('option');
+        option.value = String(year);
+        option.textContent = String(year);
+        if (year === currentYear) option.selected = true;
+        select.appendChild(option);
+      }
+    }
+
+    async function loadReportPetugas() {
+      const requestId = ++monthlyRequestId;
+      monthlyDetailRequestId++;
+      const message = document.getElementById('monthlyReportMessage');
+      message.classList.remove('error');
+      message.textContent = 'Memuat daftar petugas...';
+
+      try {
+        const url = new URL(SCRIPT_URL);
+        url.searchParams.set('action', 'rekap');
+        url.searchParams.set('bulan', document.getElementById('reportBulan').value);
+        url.searchParams.set('tahun', document.getElementById('reportTahun').value);
+        const response = await fetch(url.toString());
+        const result = await response.json();
+        if (result.status !== 'success') {
+          throw new Error(result.message || 'Gagal memuat daftar petugas.');
+        }
+        if (requestId !== monthlyRequestId) return;
+
+        const petugasByNip = new Map();
+        (result.data || []).forEach(emp => {
+          const nipNik = String(emp.nipNik || '').trim();
+          if (nipNik && !petugasByNip.has(nipNik)) {
+            petugasByNip.set(nipNik, String(emp.namaPetugas || 'Tanpa Nama').trim());
+          }
+        });
+
+        const select = document.getElementById('reportNipNik');
+        const previousNip = select.value || document.getElementById('searchPetugas').value;
+        select.innerHTML = '';
+        const petugas = Array.from(petugasByNip, ([nipNik, namaPetugas]) => ({ nipNik, namaPetugas }))
+          .sort((a, b) =>
+            a.namaPetugas.localeCompare(b.namaPetugas, 'id') ||
+            a.nipNik.localeCompare(b.nipNik, 'id')
+          );
+
+        petugas.forEach(emp => {
+          const option = document.createElement('option');
+          option.value = emp.nipNik;
+          option.textContent = `${emp.namaPetugas} — ${emp.nipNik}`;
+          option.dataset.namaPetugas = emp.namaPetugas;
+          select.appendChild(option);
+        });
+
+        if (petugasByNip.has(previousNip)) {
+          select.value = previousNip;
+        } else if (petugas.length > 0) {
+          select.value = petugas[0].nipNik;
+        }
+
+        monthlyOptionsLoaded = true;
+        if (!petugas.length) {
+          const option = document.createElement('option');
+          option.value = '';
+          option.textContent = 'Tidak ada petugas untuk periode ini';
+          select.appendChild(option);
+          renderMonthlyReport({
+            namaPetugas: '-',
+            nipNik: '-',
+            periodLabel: `${selectMonthName()} ${document.getElementById('reportTahun').value}`,
+            data: []
+          });
+          renderDetailedTransactions([]);
+          message.textContent = 'Tidak ada transaksi pada periode ini.';
+          return;
+        }
+
+        loadCurrentReportPage();
+      } catch (error) {
+        if (requestId !== monthlyRequestId) return;
+        message.classList.add('error');
+        message.textContent = `Gagal memuat daftar petugas: ${error.message}`;
+      }
+    }
+
+    function selectMonthName() {
+      return document.getElementById('reportBulan')
+        .selectedOptions[0].textContent.toUpperCase();
+    }
+
+    async function loadMonthlyReport() {
+      const nipNik = document.getElementById('reportNipNik').value;
+      const bulan = document.getElementById('reportBulan').value;
+      const tahun = document.getElementById('reportTahun').value;
+      if (!nipNik || !bulan || !tahun) return;
+
+      const requestId = ++monthlyRequestId;
+      const message = document.getElementById('monthlyReportMessage');
+      message.classList.remove('error');
+      message.textContent = 'Memuat laporan...';
+
+      try {
+        const url = new URL(SCRIPT_URL);
+        url.searchParams.set('action', 'rekap_bulanan');
+        url.searchParams.set('nip', nipNik);
+        url.searchParams.set('bulan', bulan);
+        url.searchParams.set('tahun', tahun);
+        const response = await fetch(url.toString());
+        const result = await response.json();
+        if (result.status !== 'success') {
+          throw new Error(result.message || 'Gagal memuat laporan transaksi.');
+        }
+        if (requestId !== monthlyRequestId) return;
+
+        renderMonthlyReport(result);
+        message.textContent = result.data.length
+          ? ''
+          : 'Tidak ada transaksi untuk NIP/NIK pada periode ini.';
+      } catch (error) {
+        if (requestId !== monthlyRequestId) return;
+        message.classList.add('error');
+        message.textContent = `Gagal memuat laporan: ${error.message}`;
+      }
+    }
+
+    function renderMonthlyReport(result) {
+      document.getElementById('reportNama').textContent = `: ${result.namaPetugas || '-'}`;
+      document.getElementById('reportId').textContent = `: ${result.nipNik || '-'}`;
+      document.getElementById('reportPeriode').textContent = `: ${result.periodLabel || '-'}`;
+
+      const tbody = document.getElementById('monthlyReportRows');
+      tbody.innerHTML = '';
+      (result.data || []).forEach((row, index) => {
+        const tr = document.createElement('tr');
+        const date = new Date(`${row.tglTransaksi}T00:00:00`);
+        const cells = [
+          { value: index + 1, className: 'center' },
+          {
+            value: isNaN(date.getTime())
+              ? row.tglTransaksi
+              : date.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+              })
+          },
+          { value: formatAngka(row.jumlahTransaksi), className: 'number' },
+          { value: formatAngka(row.biayaPengiriman), className: 'number' },
+          { value: formatAngka(row.ppn), className: 'number' },
+          { value: formatAngka(row.htnb), className: 'number' },
+          { value: formatAngka(row.totalBiayaPengiriman), className: 'number' }
+        ];
+
+        cells.forEach(cell => {
+          const td = document.createElement('td');
+          td.textContent = cell.value;
+          if (cell.className) td.className = cell.className;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+
+      if (result.data && result.data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center" style="padding:1.5rem; color:var(--muted);">Tidak ada transaksi pada periode ini.</td></tr>';
+      }
+    }
+
+    async function loadDetailedTransactions() {
+      const nipNik = document.getElementById('reportNipNik').value;
+      const bulan = document.getElementById('reportBulan').value;
+      const tahun = document.getElementById('reportTahun').value;
+      if (!nipNik || !bulan || !tahun) return;
+
+      const requestId = ++monthlyDetailRequestId;
+      const message = document.getElementById('monthlyDetailMessage');
+      message.classList.remove('error');
+      message.textContent = 'Memuat rincian transaksi...';
+      document.getElementById('monthlyDetailCount').textContent = 'Memuat transaksi...';
+
+      try {
+        const url = new URL(SCRIPT_URL);
+        url.searchParams.set('action', 'detail_karyawan');
+        url.searchParams.set('nip', nipNik);
+        url.searchParams.set('bulan', bulan);
+        url.searchParams.set('tahun', tahun);
+        const response = await fetch(url.toString());
+        const result = await response.json();
+        if (result.status !== 'success') {
+          throw new Error(result.message || 'Gagal memuat rincian transaksi.');
+        }
+        if (requestId !== monthlyDetailRequestId) return;
+
+        monthlyDetailData = (result.data || []).filter(row => {
+          const date = new Date(row.tglKirim);
+          return !isNaN(date.getTime()) &&
+            date.getMonth() + 1 === Number(bulan) &&
+            date.getFullYear() === Number(tahun);
+        });
+        updateDetailReportHeader();
+        renderDetailedTransactions();
+        message.textContent = monthlyDetailData.length
+          ? ''
+          : 'Tidak ada rincian transaksi pada periode ini.';
+      } catch (error) {
+        if (requestId !== monthlyDetailRequestId) return;
+        message.classList.add('error');
+        message.textContent = `Gagal memuat rincian transaksi: ${error.message}`;
+        document.getElementById('monthlyDetailCount').textContent = 'Gagal memuat transaksi';
+      }
+    }
+
+    function updateDetailReportHeader() {
+      const select = document.getElementById('reportNipNik');
+      const selectedOption = select.options[select.selectedIndex];
+      const namaPetugas = selectedOption && selectedOption.dataset.namaPetugas
+        ? selectedOption.dataset.namaPetugas
+        : '-';
+      document.getElementById('detailReportNama').textContent = `: ${namaPetugas}`;
+      document.getElementById('detailReportId').textContent = `: ${select.value || '-'}`;
+      document.getElementById('detailReportPeriode').textContent =
+        `: ${selectMonthName()} ${document.getElementById('reportTahun').value}`;
+    }
+
+    function renderDetailedTransactions() {
+      const query = document.getElementById('monthlyDetailSearch').value.toLowerCase().trim();
+      const filtered = monthlyDetailData.filter(row =>
+        [row.noResi, row.pengirim, row.penerima, row.kotaTujuan]
+          .some(value => String(value || '').toLowerCase().includes(query))
+      );
+      const tbody = document.getElementById('monthlyDetailRows');
+      tbody.innerHTML = '';
+      document.getElementById('monthlyDetailCount').textContent =
+        `Menampilkan ${filtered.length} dari ${monthlyDetailData.length} transaksi`;
+
+      if (!filtered.length) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 10;
+        td.className = 'center';
+        td.style.padding = '1.5rem';
+        td.style.color = 'var(--muted)';
+        td.textContent = query
+          ? 'Tidak ada rincian transaksi yang cocok dengan pencarian.'
+          : 'Tidak ada rincian transaksi pada periode ini.';
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+      }
+
+      filtered.forEach((row, index) => {
+        const tr = document.createElement('tr');
+        const values = [
+          { value: index + 1, className: 'center' },
+          { value: row.noResi || '-' },
+          { value: formatTanggalDisplay(row.tglKirim) },
+          { value: row.layanan || '-' },
+          { value: row.jenis || '-' },
+          { value: row.pengirim || '-' },
+          { value: row.penerima || '-' },
+          { value: row.kotaTujuan || '-' },
+          { value: `${formatAngka(row.berat, 2)} Kg`, className: 'number' },
+          { value: formatRupiah(row.totalBea), className: 'number' }
+        ];
+
+        values.forEach(item => {
+          const td = document.createElement('td');
+          td.textContent = item.value;
+          if (item.className) td.className = item.className;
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function fetchRekapData() {
+      const bulan = document.getElementById('filterBulan').value;
+      const tahun = document.getElementById('filterTahun').value;
+
+      document.getElementById('loadingState').style.display = 'block';
+      document.getElementById('tableContainer').style.display = 'none';
+      document.getElementById('statusText').textContent = 'Memuat data...';
+
+      try {
+        const url = new URL(SCRIPT_URL);
+        url.searchParams.append('action', 'rekap');
+        if (bulan) url.searchParams.append('bulan', bulan);
+        if (tahun) url.searchParams.append('tahun', tahun);
+
+        const response = await fetch(url.toString());
+        const result = await response.json();
+
+        if (result.status !== 'success') {
+          throw new Error(result.message || 'Gagal mengambil data dari server.');
+        }
+
+        allRekapData = result.data || [];
+        populatePetugasOptions(allRekapData);
+        renderDashboard();
+
+        const waktu = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('statusText').textContent = `Terhubung • Update ${waktu}`;
+      } catch (error) {
+        console.error(error);
+        document.getElementById('loadingState').innerHTML = `<p style="color:#dc2626;"><strong>Terjadi Kesalahan:</strong> ${error.message}</p>`;
+        document.getElementById('statusText').textContent = 'Gagal Terhubung';
+      }
+    }
+
+    function updateKPI(data) {
+      let totalPendapatan = 0;
+      let totalOngkir = 0;
+      let totalHtnb = 0;
+      let totalResi = 0;
+      let totalPaket = 0;
+      let totalDokumen = 0;
+      let totalBerat = 0;
+
+      data.forEach(item => {
+        totalPendapatan += item.totalPendapatan;
+        totalOngkir += item.totalOngkir;
+        totalHtnb += item.totalHtnb;
+        totalResi += item.totalTransaksi;
+        totalPaket += item.totalPaket;
+        totalDokumen += item.totalDokumen;
+        totalBerat += item.totalBerat;
+      });
+
+      document.getElementById('kpiPendapatan').textContent = formatRupiah(totalPendapatan);
+      document.getElementById('kpiOngkir').textContent = `Ongkir: ${formatRupiah(totalOngkir)} | HTNB: ${formatRupiah(totalHtnb)}`;
+
+      document.getElementById('kpiResi').textContent = `${formatAngka(totalResi)} Resi`;
+      document.getElementById('kpiJenis').textContent = `Paket: ${formatAngka(totalPaket)} | Dokumen: ${formatAngka(totalDokumen)}`;
+
+      const rataBerat = totalResi > 0 ? (totalBerat / totalResi) : 0;
+      document.getElementById('kpiBerat').textContent = `${formatAngka(totalBerat, 2)} Kg`;
+      document.getElementById('kpiRataBerat').textContent = `Rata-rata: ${formatAngka(rataBerat, 2)} Kg / resi`;
+
+      document.getElementById('kpiPetugas').textContent = `${data.length} Orang`;
+      document.getElementById('kpiTopPetugas').textContent = data.length > 0 ? `Tertinggi: ${data[0].namaPetugas}` : 'Tertinggi: -';
+    }
+
+    function renderChart(data) {
+      const ctx = document.getElementById('revenueChart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+
+      const labels = data.map(d => d.namaPetugas);
+      const revenues = data.map(d => d.totalPendapatan);
+
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Total Bea / Pendapatan (Rp)',
+            data: revenues,
+            backgroundColor: '#ea580c',
+            borderRadius: 6,
+            maxBarThickness: 55
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => formatRupiah(ctx.raw)
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: (val) => 'Rp ' + (val / 1000).toLocaleString('id-ID') + 'k'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function populatePetugasOptions(data) {
+      const select = document.getElementById('searchPetugas');
+      const selectedNipNik = select.value;
+      const petugasByNipNik = new Map();
+
+      data.forEach(emp => {
+        const nipNik = String(emp.nipNik || '').trim();
+        if (nipNik && !petugasByNipNik.has(nipNik)) {
+          petugasByNipNik.set(nipNik, String(emp.namaPetugas || 'Tanpa Nama').trim());
+        }
+      });
+
+      const petugas = Array.from(petugasByNipNik, ([nipNik, namaPetugas]) => ({
+        nipNik,
+        namaPetugas
+      })).sort((a, b) =>
+        a.namaPetugas.localeCompare(b.namaPetugas, 'id') ||
+        a.nipNik.localeCompare(b.nipNik, 'id')
+      );
+
+      select.innerHTML = '<option value="">Semua Petugas</option>';
+      petugas.forEach(emp => {
+        const option = document.createElement('option');
+        option.value = emp.nipNik;
+        option.textContent = `${emp.namaPetugas} — ${emp.nipNik}`;
+        select.appendChild(option);
+      });
+
+      if (petugasByNipNik.has(selectedNipNik)) {
+        select.value = selectedNipNik;
+      }
+    }
+
+    function renderDashboard() {
+      const selectedNipNik = document.getElementById('searchPetugas').value;
+      const filtered = allRekapData.filter(emp =>
+        !selectedNipNik || String(emp.nipNik || '').trim() === selectedNipNik
+      );
+
+      updateKPI(filtered);
+      renderChart(filtered);
+      renderTable(filtered);
+    }
+
+    function renderTable(filtered) {
+      const tbody = document.getElementById('rekapTableBody');
+      tbody.innerHTML = '';
+
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('tableContainer').style.display = 'block';
+      document.getElementById('tableCount').textContent = `Menampilkan ${filtered.length} petugas`;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="11" class="text-center" style="padding:2rem; color:var(--muted);">Tidak ada data transaksi yang sesuai filter.</td></tr>`;
+        return;
+      }
+
+      filtered.forEach((emp, idx) => {
+        const layananBadges = Object.entries(emp.rincianLayanan)
+          .map(([kode, jml]) => `<span class="tag-layanan"><strong>${kode}</strong>: ${jml}</span>`)
+          .join('');
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="text-center">${idx + 1}</td>
+          <td><code>${emp.nipNik}</code></td>
+          <td class="font-bold">${emp.namaPetugas}</td>
+          <td class="text-right font-bold">${formatAngka(emp.totalTransaksi)}</td>
+          <td class="text-right">${formatAngka(emp.totalPaket)}</td>
+          <td class="text-right">${formatAngka(emp.totalDokumen)}</td>
+          <td class="text-right">${formatAngka(emp.totalBerat, 2)}</td>
+          <td class="text-right">${formatRupiah(emp.totalOngkir)}</td>
+          <td class="text-right font-bold" style="color:var(--primary-dark);">${formatRupiah(emp.totalPendapatan)}</td>
+          <td>${layananBadges || '-'}</td>
+          <td class="text-center">
+            <button class="btn btn-outline btn-sm" onclick="openDetailModal('${emp.nipNik}', '${emp.namaPetugas.replace(/'/g, "\\'")}')">
+              🔍 Detail Resi
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function openDetailModal(nip, nama) {
+      document.getElementById('detailModal').classList.add('active');
+      document.getElementById('modalTitle').textContent = `Rincian Transaksi: ${nama}`;
+      document.getElementById('modalSubtitle').textContent = `NIP / NIK: ${nip}`;
+      document.getElementById('searchModalResi').value = '';
+      document.getElementById('modalLoading').style.display = 'block';
+      document.getElementById('modalTableWrapper').style.display = 'none';
+
+      try {
+        const url = new URL(SCRIPT_URL);
+        url.searchParams.append('action', 'detail_karyawan');
+        url.searchParams.append('nip', nip);
+
+        const response = await fetch(url.toString());
+        const result = await response.json();
+
+        if (result.status !== 'success') throw new Error(result.message);
+
+        currentDetailData = result.data || [];
+        renderDetailTable(currentDetailData);
+      } catch (error) {
+        document.getElementById('modalLoading').innerHTML = `<p style="color:#dc2626;">Gagal memuat detail resi: ${error.message}</p>`;
+      }
+    }
+
+    function filterDetailTable() {
+      const q = document.getElementById('searchModalResi').value.toLowerCase().trim();
+      const filtered = currentDetailData.filter(r =>
+        String(r.noResi).toLowerCase().includes(q) ||
+        String(r.pengirim).toLowerCase().includes(q) ||
+        String(r.penerima).toLowerCase().includes(q) ||
+        String(r.kotaTujuan).toLowerCase().includes(q)
+      );
+      renderDetailTable(filtered);
+    }
+
+    function renderDetailTable(rows) {
+      document.getElementById('modalLoading').style.display = 'none';
+      document.getElementById('modalTableWrapper').style.display = 'block';
+      document.getElementById('modalCount').textContent = `${rows.length} transaksi ditemukan`;
+
+      const tbody = document.getElementById('detailTableBody');
+      tbody.innerHTML = '';
+
+      if (rows.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center" style="padding:1.5rem;">Tidak ada resi ditemukan.</td></tr>`;
+        return;
+      }
+
+      rows.forEach(r => {
+        const tglFormatted = formatTanggalDisplay(r.tglKirim);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="font-bold"><code>${r.noResi}</code></td>
+          <td>${tglFormatted}</td>
+          <td><span class="tag-layanan">${r.layanan}</span></td>
+          <td>${r.jenis}</td>
+          <td>${r.pengirim}</td>
+          <td>${r.penerima}</td>
+          <td>${r.kotaTujuan}</td>
+          <td class="text-right">${formatAngka(r.berat, 2)} Kg</td>
+          <td class="text-right font-bold">${formatRupiah(r.totalBea)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function formatTanggalDisplay(val) {
+      if (!val) return '-';
+      const d = new Date(val);
+      if (isNaN(d.getTime())) return val;
+      return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function closeModal() {
+      document.getElementById('detailModal').classList.remove('active');
+    }
+
+    function exportToCSV() {
+      if (!allRekapData.length) {
+        alert('Tidak ada data untuk diexport.');
+        return;
+      }
+
+      const headers = ['NIP_NIK', 'Nama_Petugas', 'Total_Resi', 'Paket', 'Dokumen', 'Total_Berat_Kg', 'Total_Ongkir', 'Total_PPN', 'Total_HTNB', 'Total_Pendapatan'];
+      const csvRows = [headers.join(',')];
+
+      allRekapData.forEach(emp => {
+        const row = [
+          `"${emp.nipNik}"`,
+          `"${emp.namaPetugas}"`,
+          emp.totalTransaksi,
+          emp.totalPaket,
+          emp.totalDokumen,
+          emp.totalBerat.toFixed(2),
+          emp.totalOngkir,
+          emp.totalPpn,
+          emp.totalHtnb,
+          emp.totalPendapatan
+        ];
+        csvRows.push(row.join(','));
+      });
+
+      const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Rekap_Transaksi_Karyawan_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>
