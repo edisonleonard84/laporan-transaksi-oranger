@@ -7,10 +7,10 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --primary: #ea580c;       /* Oranye Pos / Oranger */
-      --primary-dark: #c2410c;
-      --secondary: #1e293b;
-      --bg: #f8fafc;
+      --primary: #1672f9;
+      --primary-dark: #075bd5;
+      --secondary: #374151;
+      --bg: #e2e2e2;
       --card: #ffffff;
       --text: #0f172a;
       --muted: #64748b;
@@ -32,52 +32,168 @@
       line-height: 1.5;
     }
 
-    /* Header */
-    header {
-      background: linear-gradient(135deg, var(--secondary) 0%, #0f172a 100%);
-      color: #fff;
-      padding: 1.25rem 2rem;
-      border-bottom: 4px solid var(--primary);
+    .app-layout {
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 20;
       display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
+      width: 248px;
+      flex-direction: column;
+      background: #fff;
+      box-shadow: 2px 0 8px rgba(15, 23, 42, 0.16);
+      transition: transform 0.2s ease;
+    }
+
+    .sidebar-brand {
+      display: flex;
+      min-height: 60px;
+      align-items: center;
+      padding: 0 1.25rem;
+      background: var(--primary);
+      color: #fff;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+
+    .sidebar-account {
+      margin: 0.8rem 0.35rem 1rem;
+      padding: 0.75rem 0.5rem 1rem;
+      border-bottom: 1px solid #d8dee8;
+      color: #59616c;
+      font-size: 0.82rem;
+    }
+
+    .sidebar-nav {
+      display: grid;
+      gap: 0.2rem;
+      padding: 0 0.35rem;
+    }
+
+    .nav-link {
+      display: flex;
+      width: 100%;
+      min-height: 42px;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.6rem 0.8rem;
+      border: 0;
+      border-radius: 3px;
+      background: transparent;
+      color: #414852;
+      cursor: pointer;
+      font-size: 0.88rem;
+      text-align: left;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .nav-link:hover,
+    .nav-link[aria-current="page"] {
+      background: #f0f0f0;
+      color: #111827;
+    }
+
+    .nav-link[aria-current="page"] {
+      font-weight: 600;
+    }
+
+    .nav-icon {
+      display: inline-flex;
+      width: 20px;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .app-main {
+      min-height: 100vh;
+      margin-left: 248px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      min-height: 60px;
       align-items: center;
       gap: 1rem;
+      padding: 0 1.25rem;
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 2px 5px rgba(15, 23, 42, 0.12);
     }
 
-    header h1 {
-      font-size: 1.35rem;
-      font-weight: 700;
-      letter-spacing: 0.3px;
+    .menu-toggle {
+      display: inline-flex;
+      width: 34px;
+      height: 34px;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      background: transparent;
+      color: #fff;
+      cursor: pointer;
+      font-size: 1.25rem;
     }
 
-    header p {
-      font-size: 0.85rem;
-      color: #cbd5e1;
+    .topbar-title {
+      flex: 1;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .topbar-user {
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 0.82rem;
     }
 
     .badge-status {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 0.4rem 0.85rem;
-      border-radius: 999px;
-      font-size: 0.8rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.78rem;
     }
 
     .dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background-color: #22c55e;
+      background-color: #86efac;
     }
 
-    /* Main Container */
+    .page-content {
+      min-height: calc(100vh - 60px);
+      padding: 1rem 1.25rem 2rem;
+    }
+
+    .page-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .page-heading h1 {
+      font-size: 1.45rem;
+      font-weight: 500;
+    }
+
+    .breadcrumb {
+      color: #526170;
+      font-size: 0.84rem;
+    }
+
     .container {
-      max-width: 1320px;
-      margin: 1.5rem auto;
-      padding: 0 1.25rem;
+      width: 100%;
+      max-width: 1500px;
+      margin: 0 auto 1.5rem;
+      padding: 0;
     }
 
     /* Filter Bar */
@@ -162,6 +278,11 @@
     .btn-sm {
       padding: 0.35rem 0.7rem;
       font-size: 0.8rem;
+    }
+
+    .btn:disabled {
+      cursor: wait;
+      opacity: 0.65;
     }
 
     /* KPI Summary Cards */
@@ -259,6 +380,7 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 0.88rem;
+      text-transform: uppercase;
     }
 
     th, td {
@@ -292,6 +414,13 @@
       border-radius: 4px;
       font-size: 0.75rem;
       margin-right: 0.25rem;
+    }
+
+    .service-list {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
     }
 
     /* Loading & Empty States */
@@ -432,7 +561,7 @@
 
     .monthly-table th {
       background: #ffd966;
-      text-transform: none;
+      text-transform: uppercase;
     }
 
     .monthly-table .number {
@@ -492,7 +621,70 @@
       width: min(100%, 360px);
     }
 
+    .sidebar-scrim {
+      display: none;
+    }
+
+    @media (min-width: 601px) {
+      .app-layout.sidebar-collapsed .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .app-layout.sidebar-collapsed       
+
+      .app-layout.sidebar-collapsed .app-main {
+        margin-left: 0;
+      }
+    }
+
     @media (max-width: 600px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      body.sidebar-open .sidebar {
+        transform: translateX(0);
+      }
+
+      .sidebar-scrim {
+        position: fixed;
+        inset: 0;
+        z-index: 15;
+        padding: 0;
+        border: 0;
+        background: rgba(15, 23, 42, 0.35);
+      }
+
+      body.sidebar-open .sidebar-scrim {
+        display: block;
+      }
+
+      .app-main {
+        margin-left: 0;
+      }
+
+      .topbar {
+        padding: 0 0.75rem;
+      }
+
+      .topbar-user {
+        display: none;
+      }
+
+      .page-content {
+        padding: 0.85rem 0.75rem 1.5rem;
+      }
+
+      .page-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.15rem;
+      }
+
+      .page-heading h1 {
+        font-size: 1.25rem;
+      }
+
       .monthly-report-heading {
         padding: 0.85rem;
       }
@@ -506,47 +698,55 @@
 </head>
 <body>
 
-  <header>
-    <div>
-      <h1>Dashboard Performa & Transaksi Karyawan</h1>
-      <p>Monitoring Produksi Loket & Petugas Entri — Database DATA TRX ORANGER</p>
-    </div>
-    <div class="badge-status">
-      <span class="dot"></span>
-      <span id="statusText">Siap Memuat Data</span>
-    </div>
-  </header>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">ORANGER</div>
+      <div class="sidebar-account">DATA TRX ORANGER</div>
+      <nav class="sidebar-nav" aria-label="Navigasi utama">
+        <button class="nav-link" type="button" data-page="dashboard" aria-current="page" onclick="showDashboard()">
+          <span class="nav-icon" aria-hidden="true">⌂</span>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-link" type="button" data-page="monthly" onclick="showMonthlyReport()">
+          <span class="nav-icon" aria-hidden="true">▥</span>
+          <span>Laporan Bulanan</span>
+        </button>
+        <button class="nav-link" type="button" data-page="details" onclick="showTransactionDetails()">
+          <span class="nav-icon" aria-hidden="true">▤</span>
+          <span>Rincian Transaksi</span>
+        </button>
+      </nav>
+    </aside>
+    <button class="sidebar-scrim" type="button" aria-label="Tutup menu" onclick="toggleSidebar()"></button>
+
+    <div class="app-main">
+      <header class="topbar">
+        <button class="menu-toggle" type="button" aria-label="Buka atau tutup menu" aria-controls="sidebar" onclick="toggleSidebar()">☰</button>
+        <div class="topbar-title">Laporan Transaksi Oranger</div>
+        <div class="badge-status">
+          <span class="dot"></span>
+          <span id="statusText">Siap Memuat Data</span>
+        </div>
+        <span class="topbar-user">DATA TRX ORANGER</span>
+      </header>
+
+      <main class="page-content">
+        <div class="page-heading">
+          <h1 id="pageTitle">Dashboard</h1>
+          <div class="breadcrumb"><span>⌂</span> &nbsp;/&nbsp; <span id="breadcrumbTitle">Dashboard</span></div>
+        </div>
 
   <div class="container" id="dashboardView">
     <!-- Filter Kontrol -->
     <div class="filter-card">
       <div class="form-group">
-        <label for="filterBulan">Bulan Transaksi</label>
-        <select id="filterBulan">
-          <option value="">Semua Bulan</option>
-          <option value="1">Januari</option>
-          <option value="2">Februari</option>
-          <option value="3">Maret</option>
-          <option value="4">April</option>
-          <option value="5">Mei</option>
-          <option value="6">Juni</option>
-          <option value="7">Juli</option>
-          <option value="8">Agustus</option>
-          <option value="9">September</option>
-          <option value="10">Oktober</option>
-          <option value="11">November</option>
-          <option value="12">Desember</option>
-        </select>
+        <label for="filterTanggalDari">Tanggal Dari</label>
+        <input id="filterTanggalDari" type="date" />
       </div>
 
       <div class="form-group">
-        <label for="filterTahun">Tahun</label>
-        <select id="filterTahun">
-          <option value="">Semua Tahun</option>
-          <option value="2025">2025</option>
-          <option value="2026" selected>2026</option>
-          <option value="2027">2027</option>
-        </select>
+        <label for="filterTanggalSampai">Tanggal Sampai</label>
+        <input id="filterTanggalSampai" type="date" />
       </div>
 
       <div class="form-group grow">
@@ -556,9 +756,6 @@
         </select>
       </div>
 
-      <button class="btn btn-primary" onclick="fetchRekapData()">🔄 Muat Data</button>
-      <button class="btn btn-outline" type="button" onclick="showMonthlyReport()">📅 Laporan Bulanan</button>
-      <button class="btn btn-outline" onclick="exportToCSV()">📥 Export CSV</button>
     </div>
 
     <!-- Ringkasan KPI -->
@@ -592,6 +789,15 @@
       </div>
       <div class="chart-wrapper">
         <canvas id="revenueChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="section-header">
+        <h2>Grafik Jumlah Transaksi per Petugas Entri</h2>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="transactionCountChart"></canvas>
       </div>
     </div>
 
@@ -659,8 +865,6 @@
           <option value="">Memuat daftar petugas...</option>
         </select>
       </div>
-      <button class="btn btn-primary" type="button" onclick="showTransactionDetails()">📋 Rincian Transaksi</button>
-      <button class="btn btn-outline" type="button" onclick="showDashboard()">← Kembali ke Dashboard</button>
     </div>
 
     <div id="monthlySummaryPage">
@@ -742,9 +946,10 @@
           </table>
         </div>
       </div>
-      <div style="margin-top:0.75rem;">
-        <button class="btn btn-outline" type="button" onclick="showMonthlySummary()">← Kembali ke Rekap Bulanan</button>
-      </div>
+    </div>
+  </div>
+
+      </main>
     </div>
   </div>
 
@@ -792,12 +997,11 @@
   </div>
 
   <script>
-    // URL Web App Google Apps Script yang terhubung ke Spreadsheet
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxxUxUUcYfS4tIzQlC6aBR9QEGQX7FXycVUFX7oInNTEBvum_gpkkvm08ozDDOUqP8r/exec';
-
     let allRekapData = [];
     let currentDetailData = [];
     let chartInstance = null;
+    let transactionCountChartInstance = null;
+    let rekapRequestId = 0;
     let monthlyOptionsLoaded = false;
     let monthlyRequestId = 0;
     let monthlyDetailData = [];
@@ -817,11 +1021,33 @@
         maximumFractionDigits: desimal
       }).format(angka || 0);
     };
+    const formatNamaPetugas = (namaPetugas) =>
+      String(namaPetugas || '-').toLocaleUpperCase('id-ID');
+
+    function callAppsScript(method, ...args) {
+      return new Promise((resolve, reject) => {
+        if (typeof google === 'undefined' || !google.script || !google.script.run) {
+          reject(new Error('Buka aplikasi melalui URL Google Apps Script.'));
+          return;
+        }
+
+        const runner = google.script.run
+          .withSuccessHandler(resolve)
+          .withFailureHandler(error => reject(new Error(error.message || 'Permintaan ke server gagal.')));
+        runner[method](...args);
+      });
+    }
+
+    async function callDashboardApi(action, params) {
+      return callAppsScript('getDashboardData', action, params || {});
+    }
 
     window.addEventListener('DOMContentLoaded', () => {
       const currentDate = new Date();
       document.getElementById('reportBulan').value = String(currentDate.getMonth() + 1);
       populateReportYears(currentDate.getFullYear());
+      document.getElementById('filterTanggalDari').addEventListener('change', fetchRekapData);
+      document.getElementById('filterTanggalSampai').addEventListener('change', fetchRekapData);
       document.getElementById('reportBulan').addEventListener('change', loadReportPetugas);
       document.getElementById('reportTahun').addEventListener('change', loadReportPetugas);
       document.getElementById('reportNipNik').addEventListener('change', loadCurrentReportPage);
@@ -831,9 +1057,33 @@
       fetchRekapData();
     });
 
+    function setActivePage(page, title) {
+      document.querySelectorAll('.nav-link').forEach(link => {
+        if (link.dataset.page === page) {
+          link.setAttribute('aria-current', 'page');
+        } else {
+          link.removeAttribute('aria-current');
+        }
+      });
+      document.getElementById('pageTitle').textContent = title;
+      document.getElementById('breadcrumbTitle').textContent = title;
+      document.body.classList.remove('sidebar-open');
+    }
+
+    function toggleSidebar() {
+      if (window.matchMedia('(max-width: 600px)').matches) {
+        document.body.classList.toggle('sidebar-open');
+      } else {
+        document.querySelector('.app-layout').classList.toggle('sidebar-collapsed');
+      }
+    }
+
     function showMonthlyReport() {
       document.getElementById('dashboardView').hidden = true;
       document.getElementById('monthlyReportView').hidden = false;
+      document.getElementById('transactionDetailsPage').hidden = true;
+      document.getElementById('monthlySummaryPage').hidden = false;
+      setActivePage('monthly', 'Laporan Bulanan');
       window.scrollTo(0, 0);
 
       if (monthlyOptionsLoaded) {
@@ -844,15 +1094,23 @@
     }
 
     function showTransactionDetails() {
+      document.getElementById('dashboardView').hidden = true;
+      document.getElementById('monthlyReportView').hidden = false;
       document.getElementById('monthlySummaryPage').hidden = true;
       document.getElementById('transactionDetailsPage').hidden = false;
+      setActivePage('details', 'Rincian Transaksi');
       window.scrollTo(0, 0);
-      loadDetailedTransactions();
+      if (monthlyOptionsLoaded) {
+        loadDetailedTransactions();
+      } else {
+        loadReportPetugas();
+      }
     }
 
     function showMonthlySummary() {
       document.getElementById('transactionDetailsPage').hidden = true;
       document.getElementById('monthlySummaryPage').hidden = false;
+      setActivePage('monthly', 'Laporan Bulanan');
       window.scrollTo(0, 0);
       loadMonthlyReport();
     }
@@ -868,6 +1126,7 @@
     function showDashboard() {
       document.getElementById('monthlyReportView').hidden = true;
       document.getElementById('dashboardView').hidden = false;
+      setActivePage('dashboard', 'Dashboard');
       window.scrollTo(0, 0);
     }
 
@@ -891,12 +1150,10 @@
       message.textContent = 'Memuat daftar petugas...';
 
       try {
-        const url = new URL(SCRIPT_URL);
-        url.searchParams.set('action', 'rekap');
-        url.searchParams.set('bulan', document.getElementById('reportBulan').value);
-        url.searchParams.set('tahun', document.getElementById('reportTahun').value);
-        const response = await fetch(url.toString());
-        const result = await response.json();
+        const result = await callDashboardApi('rekap', {
+          bulan: document.getElementById('reportBulan').value,
+          tahun: document.getElementById('reportTahun').value
+        });
         if (result.status !== 'success') {
           throw new Error(result.message || 'Gagal memuat daftar petugas.');
         }
@@ -922,7 +1179,7 @@
         petugas.forEach(emp => {
           const option = document.createElement('option');
           option.value = emp.nipNik;
-          option.textContent = `${emp.namaPetugas} — ${emp.nipNik}`;
+          option.textContent = `${formatNamaPetugas(emp.namaPetugas)} — ${emp.nipNik}`;
           option.dataset.namaPetugas = emp.namaPetugas;
           select.appendChild(option);
         });
@@ -975,13 +1232,7 @@
       message.textContent = 'Memuat laporan...';
 
       try {
-        const url = new URL(SCRIPT_URL);
-        url.searchParams.set('action', 'rekap_bulanan');
-        url.searchParams.set('nip', nipNik);
-        url.searchParams.set('bulan', bulan);
-        url.searchParams.set('tahun', tahun);
-        const response = await fetch(url.toString());
-        const result = await response.json();
+        const result = await callDashboardApi('rekap_bulanan', { nip: nipNik, bulan, tahun });
         if (result.status !== 'success') {
           throw new Error(result.message || 'Gagal memuat laporan transaksi.');
         }
@@ -999,7 +1250,7 @@
     }
 
     function renderMonthlyReport(result) {
-      document.getElementById('reportNama').textContent = `: ${result.namaPetugas || '-'}`;
+      document.getElementById('reportNama').textContent = `: ${formatNamaPetugas(result.namaPetugas)}`;
       document.getElementById('reportId').textContent = `: ${result.nipNik || '-'}`;
       document.getElementById('reportPeriode').textContent = `: ${result.periodLabel || '-'}`;
 
@@ -1053,13 +1304,7 @@
       document.getElementById('monthlyDetailCount').textContent = 'Memuat transaksi...';
 
       try {
-        const url = new URL(SCRIPT_URL);
-        url.searchParams.set('action', 'detail_karyawan');
-        url.searchParams.set('nip', nipNik);
-        url.searchParams.set('bulan', bulan);
-        url.searchParams.set('tahun', tahun);
-        const response = await fetch(url.toString());
-        const result = await response.json();
+        const result = await callDashboardApi('detail_karyawan', { nip: nipNik, bulan, tahun });
         if (result.status !== 'success') {
           throw new Error(result.message || 'Gagal memuat rincian transaksi.');
         }
@@ -1090,7 +1335,7 @@
       const namaPetugas = selectedOption && selectedOption.dataset.namaPetugas
         ? selectedOption.dataset.namaPetugas
         : '-';
-      document.getElementById('detailReportNama').textContent = `: ${namaPetugas}`;
+      document.getElementById('detailReportNama').textContent = `: ${formatNamaPetugas(namaPetugas)}`;
       document.getElementById('detailReportId').textContent = `: ${select.value || '-'}`;
       document.getElementById('detailReportPeriode').textContent =
         `: ${selectMonthName()} ${document.getElementById('reportTahun').value}`;
@@ -1171,24 +1416,31 @@
     }
 
     async function fetchRekapData() {
-      const bulan = document.getElementById('filterBulan').value;
-      const tahun = document.getElementById('filterTahun').value;
+      const tanggalDari = document.getElementById('filterTanggalDari').value;
+      const tanggalSampai = document.getElementById('filterTanggalSampai').value;
+      const requestId = ++rekapRequestId;
 
       document.getElementById('loadingState').style.display = 'block';
       document.getElementById('tableContainer').style.display = 'none';
       document.getElementById('statusText').textContent = 'Memuat data...';
 
-      try {
-        const url = new URL(SCRIPT_URL);
-        url.searchParams.append('action', 'rekap');
-        if (bulan) url.searchParams.append('bulan', bulan);
-        if (tahun) url.searchParams.append('tahun', tahun);
+      if (tanggalDari && tanggalSampai && tanggalDari > tanggalSampai) {
+        document.getElementById('loadingState').innerHTML =
+          '<p style="color:#dc2626;"><strong>Rentang tanggal tidak valid:</strong> Tanggal dari harus sebelum atau sama dengan tanggal sampai.</p>';
+        document.getElementById('statusText').textContent = 'Rentang tanggal tidak valid';
+        return;
+      }
 
-        const response = await fetch(url.toString());
-        const result = await response.json();
+      try {
+        const result = await callDashboardApi('rekap', { tanggalDari, tanggalSampai });
+        if (requestId !== rekapRequestId) return;
 
         if (result.status !== 'success') {
           throw new Error(result.message || 'Gagal mengambil data dari server.');
+        }
+        if ((tanggalDari || tanggalSampai) &&
+            (result.tanggalDari !== tanggalDari || result.tanggalSampai !== tanggalSampai)) {
+          throw new Error('Apps Script belum mendukung filter tanggal. Deploy versi terbaru googlescript.js.');
         }
 
         allRekapData = result.data || [];
@@ -1198,6 +1450,7 @@
         const waktu = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
         document.getElementById('statusText').textContent = `Terhubung • Update ${waktu}`;
       } catch (error) {
+        if (requestId !== rekapRequestId) return;
         console.error(error);
         document.getElementById('loadingState').innerHTML = `<p style="color:#dc2626;"><strong>Terjadi Kesalahan:</strong> ${error.message}</p>`;
         document.getElementById('statusText').textContent = 'Gagal Terhubung';
@@ -1234,15 +1487,20 @@
       document.getElementById('kpiRataBerat').textContent = `Rata-rata: ${formatAngka(rataBerat, 2)} Kg / resi`;
 
       document.getElementById('kpiPetugas').textContent = `${data.length} Orang`;
-      document.getElementById('kpiTopPetugas').textContent = data.length > 0 ? `Tertinggi: ${data[0].namaPetugas}` : 'Tertinggi: -';
+      document.getElementById('kpiTopPetugas').textContent = data.length > 0
+        ? `Tertinggi: ${formatNamaPetugas(data[0].namaPetugas)}`
+        : 'Tertinggi: -';
     }
 
     function renderChart(data) {
       const ctx = document.getElementById('revenueChart').getContext('2d');
       if (chartInstance) chartInstance.destroy();
+      const countCtx = document.getElementById('transactionCountChart').getContext('2d');
+      if (transactionCountChartInstance) transactionCountChartInstance.destroy();
 
-      const labels = data.map(d => d.namaPetugas);
+      const labels = data.map(d => formatNamaPetugas(d.namaPetugas));
       const revenues = data.map(d => d.totalPendapatan);
+      const transactionCounts = data.map(d => d.totalTransaksi);
 
       chartInstance = new Chart(ctx, {
         type: 'bar',
@@ -1277,6 +1535,41 @@
           }
         }
       });
+
+      transactionCountChartInstance = new Chart(countCtx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Jumlah Transaksi',
+            data: transactionCounts,
+            backgroundColor: '#16a34a',
+            borderRadius: 6,
+            maxBarThickness: 55
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `${formatAngka(ctx.raw)} transaksi`
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                precision: 0,
+                callback: (val) => formatAngka(val)
+              }
+            }
+          }
+        }
+      });
     }
 
     function populatePetugasOptions(data) {
@@ -1303,7 +1596,7 @@
       petugas.forEach(emp => {
         const option = document.createElement('option');
         option.value = emp.nipNik;
-        option.textContent = `${emp.namaPetugas} — ${emp.nipNik}`;
+        option.textContent = `${formatNamaPetugas(emp.namaPetugas)} — ${emp.nipNik}`;
         select.appendChild(option);
       });
 
@@ -1345,14 +1638,14 @@
         tr.innerHTML = `
           <td class="text-center">${idx + 1}</td>
           <td><code>${emp.nipNik}</code></td>
-          <td class="font-bold">${emp.namaPetugas}</td>
+          <td class="font-bold">${formatNamaPetugas(emp.namaPetugas)}</td>
           <td class="text-right font-bold">${formatAngka(emp.totalTransaksi)}</td>
           <td class="text-right">${formatAngka(emp.totalPaket)}</td>
           <td class="text-right">${formatAngka(emp.totalDokumen)}</td>
           <td class="text-right">${formatAngka(emp.totalBerat, 2)}</td>
           <td class="text-right">${formatRupiah(emp.totalOngkir)}</td>
           <td class="text-right font-bold" style="color:var(--primary-dark);">${formatRupiah(emp.totalPendapatan)}</td>
-          <td>${layananBadges || '-'}</td>
+          <td><div class="service-list">${layananBadges || '-'}</div></td>
           <td class="text-center">
             <button class="btn btn-outline btn-sm" onclick="openDetailModal('${emp.nipNik}', '${emp.namaPetugas.replace(/'/g, "\\'")}')">
               🔍 Detail Resi
@@ -1365,19 +1658,14 @@
 
     async function openDetailModal(nip, nama) {
       document.getElementById('detailModal').classList.add('active');
-      document.getElementById('modalTitle').textContent = `Rincian Transaksi: ${nama}`;
+      document.getElementById('modalTitle').textContent = `Rincian Transaksi: ${formatNamaPetugas(nama)}`;
       document.getElementById('modalSubtitle').textContent = `NIP / NIK: ${nip}`;
       document.getElementById('searchModalResi').value = '';
       document.getElementById('modalLoading').style.display = 'block';
       document.getElementById('modalTableWrapper').style.display = 'none';
 
       try {
-        const url = new URL(SCRIPT_URL);
-        url.searchParams.append('action', 'detail_karyawan');
-        url.searchParams.append('nip', nip);
-
-        const response = await fetch(url.toString());
-        const result = await response.json();
+        const result = await callDashboardApi('detail_karyawan', { nip });
 
         if (result.status !== 'success') throw new Error(result.message);
 
