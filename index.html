@@ -997,6 +997,7 @@
   </div>
 
   <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQ1YpnWI8QV4ZKMgbj9r4H7WrxZ0bmOXWJFi0eTo7jiKnG4esLXEaqR3NTWKxqGAoFzA/exec';
     let allRekapData = [];
     let currentDetailData = [];
     let chartInstance = null;
@@ -1006,6 +1007,7 @@
     let monthlyRequestId = 0;
     let monthlyDetailData = [];
     let monthlyDetailRequestId = 0;
+    let jsonpRequestId = 0;
 
     const formatRupiah = (angka) => {
       return new Intl.NumberFormat('id-ID', {
@@ -1024,22 +1026,52 @@
     const formatNamaPetugas = (namaPetugas) =>
       String(namaPetugas || '-').toLocaleUpperCase('id-ID');
 
-    function callAppsScript(method, ...args) {
-      return new Promise((resolve, reject) => {
-        if (typeof google === 'undefined' || !google.script || !google.script.run) {
-          reject(new Error('Buka aplikasi melalui URL Google Apps Script.'));
-          return;
+    function callDashboardApi(action, params) {
+      const callbackName = `orangerJsonp_${Date.now()}_${++jsonpRequestId}`;
+      const url = new URL(SCRIPT_URL);
+      url.searchParams.set('action', action);
+      url.searchParams.set('callback', callbackName);
+      Object.entries(params || {}).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+          url.searchParams.set(key, String(value));
         }
-
-        const runner = google.script.run
-          .withSuccessHandler(resolve)
-          .withFailureHandler(error => reject(new Error(error.message || 'Permintaan ke server gagal.')));
-        runner[method](...args);
       });
-    }
 
-    async function callDashboardApi(action, params) {
-      return callAppsScript('getDashboardData', action, params || {});
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        let timeoutId;
+        const cleanup = () => {
+          clearTimeout(timeoutId);
+          delete window[callbackName];
+          script.remove();
+        };
+
+        window[callbackName] = result => {
+          cleanup();
+          if (!result || result.status !== 'success') {
+            reject(new Error(result && result.message || 'Gagal mengambil data dari server.'));
+            return;
+          }
+          resolve(result);
+        };
+
+        script.onerror = () => {
+          cleanup();
+          reject(new Error('Gagal memuat respons Apps Script. Pastikan versi script terbaru sudah di-deploy.'));
+        };
+        script.onload = () => {
+          if (window[callbackName]) {
+            cleanup();
+            reject(new Error('Respons Apps Script tidak berisi callback JSONP. Deploy ulang googlescript.js.'));
+          }
+        };
+        timeoutId = setTimeout(() => {
+          cleanup();
+          reject(new Error('Apps Script tidak merespons dalam 20 detik.'));
+        }, 20000);
+        script.src = url.toString();
+        document.head.appendChild(script);
+      });
     }
 
     window.addEventListener('DOMContentLoaded', () => {
