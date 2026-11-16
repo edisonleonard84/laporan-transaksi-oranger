@@ -40,6 +40,11 @@
       background: linear-gradient(135deg, #e2e8f0, #f8fafc);
     }
 
+    #loginView[hidden],
+    #appLayout[hidden] {
+      display: none !important;
+    }
+
     .login-card {
       width: 100%;
       max-width: 420px;
@@ -1195,7 +1200,7 @@
   </div>
 
   <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyAvRLcvnGFlhl5L4nSf3XSJqa7KKIULhiq7FM85TldXHss1inxEU-JiUjq2Asx2-XY/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzl8cPhzgAgWeBTDASHP-8U4woqE94zI4KBEg9M85-oGQ27HOL0yGiLuuno7jtE5fO4/exec';
     let allRekapData = [];
     let currentDetailData = [];
     let chartInstance = null;
@@ -1249,10 +1254,16 @@
 
       return new Promise((resolve, reject) => {
         const script = document.createElement('script');
+        const timeoutMs = requestTimeoutMs || 20000;
         let timeoutId;
-        const cleanup = () => {
+        const cleanup = (preserveCallback = false) => {
           clearTimeout(timeoutId);
-          delete window[callbackName];
+          if (preserveCallback) {
+            window[callbackName] = () => {};
+            setTimeout(() => delete window[callbackName], 60000);
+          } else {
+            delete window[callbackName];
+          }
           script.remove();
         };
 
@@ -1271,19 +1282,19 @@
         };
 
         script.onerror = () => {
-          cleanup();
+          cleanup(true);
           reject(new Error('Gagal memuat respons Apps Script. Pastikan versi script terbaru sudah di-deploy.'));
         };
         script.onload = () => {
           if (window[callbackName]) {
-            cleanup();
+            cleanup(true);
             reject(new Error('Respons Apps Script tidak berisi callback JSONP. Deploy ulang googlescript.js.'));
           }
         };
         timeoutId = setTimeout(() => {
-          cleanup();
-          reject(new Error('Apps Script tidak merespons dalam 20 detik.'));
-        }, requestTimeoutMs || 20000);
+          cleanup(true);
+          reject(new Error(`Apps Script tidak merespons dalam ${Math.round(timeoutMs / 1000)} detik.`));
+        }, timeoutMs);
         script.src = url.toString();
         document.head.appendChild(script);
       });
@@ -1393,7 +1404,11 @@
 
       while (activeLoginRequestId === requestId && Date.now() < deadline) {
         try {
-          const response = await callDashboardApi('login_status', { requestId }, 8000);
+          const response = await callDashboardApi(
+            'login_status',
+            { requestId },
+            Math.min(20000, deadline - Date.now())
+          );
           if (response.loginStatus === 'complete') {
             const result = response.result;
             sessionStorage.setItem('orangerSessionToken', result.sessionToken);
@@ -1421,11 +1436,14 @@
             message.classList.add('error');
             return;
           }
-          activeLoginRequestId = null;
-          button.disabled = false;
-          message.textContent = `Tidak dapat memeriksa akun: ${lastError}`;
-          message.classList.add('error');
-          return;
+          if (error.code) {
+            activeLoginRequestId = null;
+            button.disabled = false;
+            message.textContent = `Tidak dapat memeriksa akun: ${lastError}`;
+            message.classList.add('error');
+            return;
+          }
+          message.textContent = 'Koneksi terganggu. Mencoba kembali memeriksa akun...';
         }
         await new Promise(resolve => setTimeout(resolve, 500));
       }
