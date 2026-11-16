@@ -194,6 +194,10 @@
       font-weight: 600;
     }
 
+    #uploadNavButton[hidden] {
+      display: none !important;
+    }
+
     .nav-icon {
       display: inline-flex;
       width: 20px;
@@ -895,7 +899,7 @@
           <span class="nav-icon" aria-hidden="true">▤</span>
           <span>Rincian Transaksi</span>
         </button>
-        <button class="nav-link" type="button" data-page="upload" onclick="showCsvUpload()">
+        <button class="nav-link" id="uploadNavButton" type="button" data-page="upload" onclick="showCsvUpload()">
           <span class="nav-icon" aria-hidden="true">↑</span>
           <span>Upload File CSV</span>
         </button>
@@ -1342,6 +1346,8 @@
     function showAuthenticatedApp(user) {
       document.getElementById('loginView').hidden = true;
       document.getElementById('appLayout').hidden = false;
+      document.getElementById('uploadNavButton').hidden =
+        String(user && user.role || '').trim().toLowerCase() !== 'superuser';
       document.getElementById('topbarUser').textContent =
         user && (user.displayName || user.username) || 'DATA TRX ORANGER';
     }
