@@ -582,6 +582,77 @@
       color: #dc2626;
     }
 
+    .upload-card {
+      max-width: 760px;
+      padding: 1.5rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .upload-card h2 {
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+    }
+
+    .upload-description {
+      margin-bottom: 1.25rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .upload-form {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .upload-form input[type="file"] {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px dashed #94a3b8;
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .upload-submit {
+      width: fit-content;
+      padding: 0.65rem 1rem;
+      border: 0;
+      border-radius: 6px;
+      background: var(--primary);
+      color: #fff;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 600;
+    }
+
+    .upload-submit:disabled {
+      cursor: wait;
+      opacity: 0.65;
+    }
+
+    .upload-message {
+      min-height: 1.5rem;
+      color: var(--muted);
+    }
+
+    .upload-message.error,
+    .upload-message.success {
+      padding: 0.65rem 0.8rem;
+      border-radius: 6px;
+    }
+
+    .upload-message.error {
+      color: #dc2626;
+      background: #fef2f2;
+    }
+
+    .upload-message.success {
+      color: var(--success);
+      background: #f0fdf4;
+    }
+
     .monthly-detail-toolbar {
       display: flex;
       flex-wrap: wrap;
@@ -714,6 +785,10 @@
         <button class="nav-link" type="button" data-page="details" onclick="showTransactionDetails()">
           <span class="nav-icon" aria-hidden="true">▤</span>
           <span>Rincian Transaksi</span>
+        </button>
+        <button class="nav-link" type="button" data-page="upload" onclick="showCsvUpload()">
+          <span class="nav-icon" aria-hidden="true">↑</span>
+          <span>Upload File CSV</span>
         </button>
       </nav>
     </aside>
@@ -949,9 +1024,27 @@
     </div>
   </div>
 
+  <section class="container" id="csvUploadView" hidden>
+    <div class="upload-card">
+      <h2>Upload data transaksi ke Google Sheets</h2>
+      <p class="upload-description">
+        Pilih file CSV transaksi (maksimal 5 MB). File harus menggunakan pemisah titik koma (;) dan memiliki kolom NIP/NIK.
+        Data dengan nomor resi yang sudah ada atau NIP/NIK di luar daftar yang diizinkan akan dilewati.
+      </p>
+      <form class="upload-form" id="csvUploadForm">
+        <label for="csvUploadFile">File CSV</label>
+        <input id="csvUploadFile" type="file" accept=".csv,text/csv" required />
+        <button class="upload-submit" id="csvUploadButton" type="submit">Upload ke Google Sheets</button>
+        <p class="upload-message" id="csvUploadMessage" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
       </main>
     </div>
   </div>
+
+  <iframe id="csvUploadFrame" name="csvUploadFrame" title="Status upload CSV" hidden></iframe>
 
   <!-- Modal Detail Transaksi Karyawan -->
   <div class="modal-backdrop" id="detailModal">
@@ -1008,6 +1101,7 @@
     let monthlyDetailData = [];
     let monthlyDetailRequestId = 0;
     let jsonpRequestId = 0;
+    let activeCsvUploadRequestId = null;
 
     const formatRupiah = (angka) => {
       return new Intl.NumberFormat('id-ID', {
@@ -1086,6 +1180,7 @@
       document.getElementById('monthlyDetailSearch').addEventListener('input', renderDetailedTransactions);
       document.getElementById('monthlyDetailDateFrom').addEventListener('input', renderDetailedTransactions);
       document.getElementById('monthlyDetailDateTo').addEventListener('input', renderDetailedTransactions);
+      document.getElementById('csvUploadForm').addEventListener('submit', uploadCsvFile);
       fetchRekapData();
     });
 
@@ -1112,6 +1207,7 @@
 
     function showMonthlyReport() {
       document.getElementById('dashboardView').hidden = true;
+      document.getElementById('csvUploadView').hidden = true;
       document.getElementById('monthlyReportView').hidden = false;
       document.getElementById('transactionDetailsPage').hidden = true;
       document.getElementById('monthlySummaryPage').hidden = false;
@@ -1127,6 +1223,7 @@
 
     function showTransactionDetails() {
       document.getElementById('dashboardView').hidden = true;
+      document.getElementById('csvUploadView').hidden = true;
       document.getElementById('monthlyReportView').hidden = false;
       document.getElementById('monthlySummaryPage').hidden = true;
       document.getElementById('transactionDetailsPage').hidden = false;
@@ -1157,9 +1254,139 @@
 
     function showDashboard() {
       document.getElementById('monthlyReportView').hidden = true;
+      document.getElementById('csvUploadView').hidden = true;
       document.getElementById('dashboardView').hidden = false;
       setActivePage('dashboard', 'Dashboard');
       window.scrollTo(0, 0);
+    }
+
+    function showCsvUpload() {
+      document.getElementById('dashboardView').hidden = true;
+      document.getElementById('monthlyReportView').hidden = true;
+      document.getElementById('csvUploadView').hidden = false;
+      setActivePage('upload', 'Upload File CSV');
+      window.scrollTo(0, 0);
+    }
+
+    async function uploadCsvFile(event) {
+      event.preventDefault();
+      const fileInput = document.getElementById('csvUploadFile');
+      const button = document.getElementById('csvUploadButton');
+      const message = document.getElementById('csvUploadMessage');
+      const file = fileInput.files && fileInput.files[0];
+      message.className = 'upload-message';
+
+      if (!file) {
+        message.textContent = 'Pilih file CSV terlebih dahulu.';
+        message.classList.add('error');
+        return;
+      }
+      if (!/\.csv$/i.test(file.name)) {
+        message.textContent = 'Format file harus CSV.';
+        message.classList.add('error');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        message.textContent = 'Ukuran file maksimal 5 MB.';
+        message.classList.add('error');
+        return;
+      }
+
+      button.disabled = true;
+      message.textContent = 'Mengirim file ke Google Sheets...';
+      const requestId = `${Date.now()}_${Math.random().toString(36).slice(2)}`;
+      activeCsvUploadRequestId = requestId;
+
+      try {
+        const csvContent = await file.text();
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = SCRIPT_URL;
+        form.target = 'csvUploadFrame';
+        form.hidden = true;
+
+        const fields = {
+          action: 'upload_csv',
+          requestId,
+          fileName: file.name,
+          csvContent
+        };
+        Object.entries(fields).forEach(([name, value]) => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = name;
+          input.value = value;
+          form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+        form.remove();
+        await waitForCsvUploadResult(requestId);
+      } catch (error) {
+        activeCsvUploadRequestId = null;
+        button.disabled = false;
+        message.textContent = `Gagal membaca file CSV: ${error.message}`;
+        message.classList.add('error');
+      }
+    }
+
+    async function waitForCsvUploadResult(requestId) {
+      const deadline = Date.now() + 60000;
+      let lastError = '';
+      const message = document.getElementById('csvUploadMessage');
+
+      while (activeCsvUploadRequestId === requestId && Date.now() < deadline) {
+        try {
+          const response = await callDashboardApi('upload_status', { requestId });
+          if (response.uploadStatus === 'complete') {
+            showCsvUploadResult(response.result);
+            return;
+          }
+          if (response.uploadStatus === 'error') {
+            showCsvUploadResult(response.result);
+            return;
+          }
+        } catch (error) {
+          lastError = error.message;
+          if (lastError.includes('Aksi tidak dikenali')) {
+            activeCsvUploadRequestId = null;
+            document.getElementById('csvUploadButton').disabled = false;
+            message.textContent = 'Apps Script belum mendukung status upload. Deploy ulang versi terbaru googlescript.js.';
+            message.classList.add('error');
+            return;
+          }
+        }
+        await new Promise(resolve => setTimeout(resolve, 1500));
+      }
+
+      if (activeCsvUploadRequestId !== requestId) return;
+      activeCsvUploadRequestId = null;
+      document.getElementById('csvUploadButton').disabled = false;
+      message.textContent = lastError
+        ? `Gagal memeriksa status upload: ${lastError}`
+        : 'Server tidak merespons. Pastikan versi terbaru googlescript.js sudah di-deploy, lalu coba lagi.';
+      message.classList.add('error');
+    }
+
+    function showCsvUploadResult(result) {
+      activeCsvUploadRequestId = null;
+      document.getElementById('csvUploadButton').disabled = false;
+      const message = document.getElementById('csvUploadMessage');
+      if (!result || result.status !== 'success') {
+        message.textContent = result && result.message || 'Upload CSV gagal.';
+        message.classList.add('error');
+        return;
+      }
+
+      const rowsAdded = Number(result.rowsAdded) || 0;
+      if (rowsAdded > 0) {
+        message.textContent = `Berhasil! ${rowsAdded} data baru berhasil di-upload dan tersimpan di Google Sheets. ${result.duplicatesSkipped} duplikat, ${result.disallowedNipSkipped} NIP/NIK tidak diizinkan, dan ${result.invalidRowsSkipped} baris tidak valid dilewati.`;
+      } else {
+        message.textContent = `Upload berhasil diproses, tetapi tidak ada data baru yang disimpan di Google Sheets. ${result.duplicatesSkipped} duplikat, ${result.disallowedNipSkipped} NIP/NIK tidak diizinkan, dan ${result.invalidRowsSkipped} baris tidak valid dilewati.`;
+      }
+      message.classList.add('success');
+      fetchRekapData();
     }
 
     function populateReportYears(currentYear) {
