@@ -33,11 +33,18 @@
     }
 
     .login-page {
-      display: grid;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
       min-height: 100vh;
-      place-items: center;
-      padding: 1rem;
-      background: linear-gradient(135deg, #e2e8f0, #f8fafc);
+      padding: 2rem clamp(1rem, 9vw, 9rem) 2rem 2rem;
+      overflow: hidden;
+      background-color: #20201e;
+      background-image: linear-gradient(90deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.08)), url('background.jpg');
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
     }
 
     #loginView[hidden],
@@ -47,46 +54,62 @@
 
     .login-card {
       width: 100%;
-      max-width: 420px;
-      padding: 2rem;
-      border: 1px solid var(--border);
-      border-radius: 12px;
+      max-width: 350px;
+      padding: 1.25rem 1.1rem 1.35rem;
+      border: 0;
+      border-radius: 0;
       background: #fff;
-      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.28);
     }
 
     .login-brand {
-      margin-bottom: 0.25rem;
-      color: var(--primary);
-      font-size: 1.2rem;
+      margin-bottom: 1.15rem;
+      color: #25354a;
+      font-size: 0.78rem;
       font-weight: 800;
-      letter-spacing: 0.08em;
+      letter-spacing: 0;
+      text-align: center;
+      text-transform: uppercase;
     }
 
     .login-card h1 {
-      margin-bottom: 0.35rem;
-      font-size: 1.35rem;
+      display: none;
     }
 
     .login-description {
-      margin-bottom: 1.5rem;
-      color: var(--muted);
-      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      color: #64748b;
+      font-size: 0.8rem;
+      text-align: center;
     }
 
     .login-form {
       display: grid;
-      gap: 0.85rem;
+      gap: 0.72rem;
     }
 
     .login-form label {
-      margin-bottom: -0.55rem;
-      font-size: 0.85rem;
-      font-weight: 600;
+      margin-bottom: -0.5rem;
+      color: #334155;
+      font-size: 0.78rem;
+      font-weight: 500;
     }
 
     .login-form input {
       width: 100%;
+      min-height: 2.15rem;
+      padding: 0.45rem 0.6rem;
+      border: 1px solid #d7dee8;
+      border-radius: 0;
+      color: #1e293b;
+      font-size: 0.82rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .login-form input:focus {
+      border-color: #78aafc;
+      box-shadow: 0 0 0 2px rgba(22, 114, 249, 0.12);
     }
 
     .login-submit,
@@ -101,8 +124,10 @@
     }
 
     .login-submit {
-      margin-top: 0.4rem;
-      padding: 0.7rem 1rem;
+      margin-top: 0.55rem;
+      padding: 0.55rem 1rem;
+      border-radius: 0;
+      font-size: 0.82rem;
     }
 
     .login-submit:disabled {
@@ -111,7 +136,8 @@
     }
 
     .login-message {
-      min-height: 1.4rem;
+      min-height: 1rem;
+      margin-top: 0.1rem;
       color: var(--muted);
       font-size: 0.85rem;
     }
@@ -806,6 +832,16 @@
     }
 
     @media (max-width: 600px) {
+      .login-page {
+        justify-content: center;
+        padding: 1rem;
+        background-position: 62% center;
+      }
+
+      .login-card {
+        max-width: 340px;
+      }
+
       .sidebar {
         transform: translateX(-100%);
       }
@@ -868,14 +904,14 @@
 
   <section class="login-page" id="loginView">
     <div class="login-card">
-      <div class="login-brand">ORANGER</div>
+      <div class="login-brand">DATA TRANSAKSI KIBANA ORANGER</div>
       <h1>Masuk ke Dashboard</h1>
-      <p class="login-description">Gunakan akun yang terdaftar pada database pengguna.</p>
+      <p class="login-description">Login Menggunakan NIK Oranger / BM</p>
       <form class="login-form" id="loginForm">
         <label for="loginUsername">Username</label>
-        <input id="loginUsername" name="username" type="text" autocomplete="username" required />
+        <input id="loginUsername" name="username" type="text" autocomplete="username" placeholder="Username" required />
         <label for="loginPassword">Password</label>
-        <input id="loginPassword" name="password" type="password" autocomplete="current-password" required />
+        <input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Password" required />
         <button class="login-submit" id="loginSubmit" type="submit">Masuk</button>
         <p class="login-message" id="loginMessage" role="status" aria-live="polite"></p>
       </form>
