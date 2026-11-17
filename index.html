@@ -462,6 +462,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
       margin-bottom: 1rem;
     }
 
@@ -479,6 +481,20 @@
     .chart-summary {
       color: var(--muted);
       font-size: 0.82rem;
+    }
+
+    .service-filter {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .service-filter label {
+      white-space: nowrap;
+    }
+
+    .service-filter select {
+      min-width: 180px;
     }
 
     /* Table */
@@ -1034,6 +1050,12 @@
     <div class="chart-card">
       <div class="section-header">
         <h2>Perbandingan Transaksi per Layanan Tahun 2026</h2>
+        <div class="service-filter">
+          <label for="serviceProductionFilter">Pilih Layanan</label>
+          <select id="serviceProductionFilter" onchange="renderDashboard()">
+            <option value="">Semua Layanan</option>
+          </select>
+        </div>
         <span class="chart-summary" id="serviceProductionSummary">Memuat Januari–Desember 2026...</span>
       </div>
       <div class="chart-wrapper">
@@ -2214,6 +2236,7 @@
 
     function renderServiceMonthlyChart(ctx) {
       const selectedNipNik = document.getElementById('searchPetugas').value;
+      const selectedService = document.getElementById('serviceProductionFilter').value;
       const monthlyTotals = getServiceMonthlyTotals(selectedNipNik);
       const serviceTotals = {};
       monthlyTotals.forEach(month => Object.entries(month).forEach(([layanan, jumlah]) => {
@@ -2223,6 +2246,7 @@
       const layanan = Object.keys(serviceTotals).sort((a, b) =>
         serviceTotals[b] - serviceTotals[a] || a.localeCompare(b, 'id')
       );
+      const displayedLayanan = selectedService ? [selectedService] : layanan;
       const colors = ['#2563eb', '#ea580c', '#16a34a', '#9333ea', '#0891b2', '#ca8a04', '#dc2626', '#475569'];
       const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 
@@ -2230,11 +2254,11 @@
         type: 'line',
         data: {
           labels: monthLabels,
-          datasets: layanan.map((namaLayanan, index) => ({
+          datasets: displayedLayanan.map((namaLayanan, index) => ({
             label: namaLayanan,
             data: monthlyTotals.map(month => month[namaLayanan] || 0),
-            borderColor: colors[index % colors.length],
-            backgroundColor: colors[index % colors.length],
+            borderColor: colors[Math.max(0, layanan.indexOf(namaLayanan)) % colors.length],
+            backgroundColor: colors[Math.max(0, layanan.indexOf(namaLayanan)) % colors.length],
             borderWidth: 2,
             pointRadius: 3,
             pointHoverRadius: 5,
@@ -2247,7 +2271,7 @@
           maintainAspectRatio: false,
           interaction: { mode: 'index', intersect: false },
           plugins: {
-            legend: { display: layanan.length > 0, position: 'top', align: 'start' },
+            legend: { display: displayedLayanan.length > 0, position: 'top', align: 'start' },
             tooltip: {
               callbacks: {
                 label: tooltipContext => `${tooltipContext.dataset.label}: ${formatAngka(tooltipContext.raw)} transaksi`
@@ -2265,11 +2289,32 @@
         }
       });
 
-      const total = Object.values(serviceTotals).reduce((sum, value) => sum + value, 0);
+      const total = displayedLayanan.reduce((sum, service) => sum + (serviceTotals[service] || 0), 0);
       const summary = document.getElementById('serviceProductionSummary');
-      summary.textContent = layanan.length
-        ? `${formatAngka(total)} transaksi dari ${layanan.length} layanan • Januari–Desember 2026`
+      summary.textContent = displayedLayanan.length
+        ? selectedService
+          ? `${formatAngka(total)} transaksi untuk layanan ${selectedService} • Januari–Desember 2026`
+          : `${formatAngka(total)} transaksi dari ${layanan.length} layanan • Januari–Desember 2026`
         : 'Belum ada transaksi layanan pada tahun 2026';
+    }
+
+    function populateServiceOptions() {
+      const select = document.getElementById('serviceProductionFilter');
+      const selectedService = select.value;
+      const serviceNames = new Set();
+
+      serviceMonthlyData.forEach(monthData => {
+        Object.keys(getServiceTotals(monthData)).forEach(service => serviceNames.add(service));
+      });
+
+      select.innerHTML = '<option value="">Semua Layanan</option>';
+      Array.from(serviceNames).sort((a, b) => a.localeCompare(b, 'id')).forEach(service => {
+        const option = document.createElement('option');
+        option.value = service;
+        option.textContent = service;
+        select.appendChild(option);
+      });
+      if (serviceNames.has(selectedService)) select.value = selectedService;
     }
 
     async function loadServiceMonthlyData(requestId) {
@@ -2294,6 +2339,7 @@
         }
         serviceMonthlyData = monthlyData;
         if (requestId !== rekapRequestId || monthlyRequestId !== serviceMonthlyRequestId) return;
+        populateServiceOptions();
         renderDashboard();
       } catch (error) {
         if (requestId !== rekapRequestId || monthlyRequestId !== serviceMonthlyRequestId) return;
