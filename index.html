@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard Transaksi Karyawan — Data TRX Oranger</title>
+  <title>Dashboard Transaksi Karyawan — Data Transaksi Oranger</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
@@ -474,6 +474,11 @@
       position: relative;
       height: 260px;
       width: 100%;
+    }
+
+    .chart-summary {
+      color: var(--muted);
+      font-size: 0.82rem;
     }
 
     /* Table */
@@ -951,7 +956,7 @@
           <span class="dot"></span>
           <span id="statusText">Siap Memuat Data</span>
         </div>
-        <span class="topbar-user" id="topbarUser">DATA TRX ORANGER</span>
+        <span class="topbar-user" id="topbarUser">DATA TRANSAKSI ORANGER</span>
         <button class="logout-button" id="logoutButton" type="button">Keluar</button>
       </header>
 
@@ -965,17 +970,17 @@
     <!-- Filter Kontrol -->
     <div class="filter-card">
       <div class="form-group">
-        <label for="filterTanggalDari">Tanggal Dari</label>
+        <label for="filterTanggalDari">Tanggal Awal</label>
         <input id="filterTanggalDari" type="date" />
       </div>
 
       <div class="form-group">
-        <label for="filterTanggalSampai">Tanggal Sampai</label>
+        <label for="filterTanggalSampai">Tanggal Akhir</label>
         <input id="filterTanggalSampai" type="date" />
       </div>
 
       <div class="form-group grow">
-        <label for="searchPetugas">Pilih Petugas (NIP / NIK)</label>
+        <label for="searchPetugas">Pilih Petugas (NIPPOS / NIK)</label>
         <select id="searchPetugas" onchange="renderDashboard()">
           <option value="">Semua Petugas</option>
         </select>
@@ -1026,6 +1031,16 @@
       </div>
     </div>
 
+    <div class="chart-card">
+      <div class="section-header">
+        <h2>Perbandingan Transaksi per Layanan Tahun 2026</h2>
+        <span class="chart-summary" id="serviceProductionSummary">Memuat Januari–Desember 2026...</span>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="serviceMonthlyChart"></canvas>
+      </div>
+    </div>
+
     <!-- Tabel Rekap Karyawan -->
     <div class="table-card">
       <div class="table-top">
@@ -1043,7 +1058,7 @@
           <thead>
             <tr>
               <th class="text-center">No</th>
-              <th>NIP / NIK</th>
+              <th>NIPPOS / NIK</th>
               <th>Nama Petugas Entri</th>
               <th class="text-right">Total Resi</th>
               <th class="text-right">Paket</th>
@@ -1085,7 +1100,7 @@
         <select id="reportTahun"></select>
       </div>
       <div class="monthly-field grow">
-        <label for="reportNipNik">Pilih NIP / NIK</label>
+        <label for="reportNipNik">Pilih NIPPOS / NIK</label>
         <select id="reportNipNik">
           <option value="">Memuat daftar petugas...</option>
         </select>
@@ -1176,15 +1191,15 @@
 
   <section class="container" id="csvUploadView" hidden>
     <div class="upload-card">
-      <h2>Upload data transaksi ke Google Sheets</h2>
+      <h2>Upload data transaksi ke Database</h2>
       <p class="upload-description">
-        Pilih file CSV transaksi (maksimal 5 MB). File harus menggunakan pemisah titik koma (;) dan memiliki kolom NIP/NIK.
+        Pilih satu atau beberapa file CSV transaksi (maksimal 5 MB per file). File harus menggunakan pemisah titik koma (;) dan memiliki kolom NIP/NIK.
         Data dengan nomor resi yang sudah ada atau NIP/NIK di luar daftar yang diizinkan akan dilewati.
       </p>
       <form class="upload-form" id="csvUploadForm">
         <label for="csvUploadFile">File CSV</label>
-        <input id="csvUploadFile" type="file" accept=".csv,text/csv" required />
-        <button class="upload-submit" id="csvUploadButton" type="submit">Upload ke Google Sheets</button>
+        <input id="csvUploadFile" type="file" accept=".csv,text/csv" multiple required />
+        <button class="upload-submit" id="csvUploadButton" type="submit">Upload ke Database</button>
         <p class="upload-message" id="csvUploadMessage" role="status" aria-live="polite"></p>
       </form>
     </div>
@@ -1202,7 +1217,7 @@
       <div class="modal-header">
         <div>
           <h3 id="modalTitle" style="font-size: 1.1rem;">Detail Transaksi Petugas</h3>
-          <p id="modalSubtitle" style="font-size: 0.82rem; color: #cbd5e1;">NIP: -</p>
+          <p id="modalSubtitle" style="font-size: 0.82rem; color: #cbd5e1;">NIPPOS: -</p>
         </div>
         <button class="modal-close" onclick="closeModal()">&times;</button>
       </div>
@@ -1241,11 +1256,15 @@
 
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzl8cPhzgAgWeBTDASHP-8U4woqE94zI4KBEg9M85-oGQ27HOL0yGiLuuno7jtE5fO4/exec';
+    const SERVICE_COMPARISON_YEAR = 2026;
     let allRekapData = [];
     let currentDetailData = [];
     let chartInstance = null;
     let transactionCountChartInstance = null;
+    let serviceProductionChartInstance = null;
     let rekapRequestId = 0;
+    let serviceMonthlyRequestId = 0;
+    let serviceMonthlyData = [];
     let monthlyOptionsLoaded = false;
     let monthlyRequestId = 0;
     let monthlyDetailData = [];
@@ -1588,106 +1607,125 @@
       const fileInput = document.getElementById('csvUploadFile');
       const button = document.getElementById('csvUploadButton');
       const message = document.getElementById('csvUploadMessage');
-      const file = fileInput.files && fileInput.files[0];
+      const files = Array.from(fileInput.files || []);
       message.className = 'upload-message';
 
-      if (!file) {
-        message.textContent = 'Pilih file CSV terlebih dahulu.';
+      if (!files.length) {
+        message.textContent = 'Pilih setidaknya satu file CSV terlebih dahulu.';
         message.classList.add('error');
         return;
       }
-      if (!/\.csv$/i.test(file.name)) {
-        message.textContent = 'Format file harus CSV.';
+
+      const invalidFile = files.find(file => !/\.csv$/i.test(file.name));
+      if (invalidFile) {
+        message.textContent = `Format file harus CSV: ${invalidFile.name}`;
         message.classList.add('error');
         return;
       }
-      if (file.size > 5 * 1024 * 1024) {
-        message.textContent = 'Ukuran file maksimal 5 MB.';
+      const oversizedFile = files.find(file => file.size > 5 * 1024 * 1024);
+      if (oversizedFile) {
+        message.textContent = `Ukuran file maksimal 5 MB: ${oversizedFile.name}`;
         message.classList.add('error');
         return;
       }
 
       button.disabled = true;
-      message.textContent = 'Mengirim file ke Google Sheets...';
+      const totals = {
+        rowsAdded: 0,
+        duplicatesSkipped: 0,
+        disallowedNipSkipped: 0,
+        invalidRowsSkipped: 0
+      };
 
       try {
-        const requestId = createRequestId();
-        activeCsvUploadRequestId = requestId;
-        const csvContent = await file.text();
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = SCRIPT_URL;
-        form.target = 'csvUploadFrame';
-        form.hidden = true;
-
-        const fields = {
-          action: 'upload_csv',
-          requestId,
-          fileName: file.name,
-          csvContent,
-          sessionToken: sessionStorage.getItem('orangerSessionToken') || ''
-        };
-        Object.entries(fields).forEach(([name, value]) => {
-          const input = document.createElement('input');
-          input.type = 'hidden';
-          input.name = name;
-          input.value = value;
-          form.appendChild(input);
-        });
-
-        document.body.appendChild(form);
-        form.submit();
-        form.remove();
-        await waitForCsvUploadResult(requestId);
+        for (let index = 0; index < files.length; index += 1) {
+          const file = files[index];
+          message.textContent = `Mengirim file ${index + 1} dari ${files.length} ke Google Sheets...`;
+          const result = await uploadSingleCsvFile(file);
+          totals.rowsAdded += Number(result.rowsAdded) || 0;
+          totals.duplicatesSkipped += Number(result.duplicatesSkipped) || 0;
+          totals.disallowedNipSkipped += Number(result.disallowedNipSkipped) || 0;
+          totals.invalidRowsSkipped += Number(result.invalidRowsSkipped) || 0;
+        }
+        showCsvUploadResult({ status: 'success', ...totals });
       } catch (error) {
         activeCsvUploadRequestId = null;
         button.disabled = false;
-        message.textContent = `Gagal membaca file CSV: ${error.message}`;
+        message.textContent = `Upload CSV gagal: ${error.message}`;
         message.classList.add('error');
       }
+    }
+
+    async function uploadSingleCsvFile(file) {
+      const requestId = createRequestId();
+      activeCsvUploadRequestId = requestId;
+      const csvContent = await file.text();
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = SCRIPT_URL;
+      form.target = 'csvUploadFrame';
+      form.hidden = true;
+
+      const fields = {
+        action: 'upload_csv',
+        requestId,
+        fileName: file.name,
+        csvContent,
+        sessionToken: sessionStorage.getItem('orangerSessionToken') || ''
+      };
+      Object.entries(fields).forEach(([name, value]) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = value;
+        form.appendChild(input);
+      });
+
+      document.body.appendChild(form);
+      form.submit();
+      form.remove();
+      return waitForCsvUploadResult(requestId);
     }
 
     async function waitForCsvUploadResult(requestId) {
       const deadline = Date.now() + 60000;
       let lastError = '';
-      const message = document.getElementById('csvUploadMessage');
 
       while (activeCsvUploadRequestId === requestId && Date.now() < deadline) {
         try {
           const response = await callDashboardApi('upload_status', { requestId });
           if (response.uploadStatus === 'complete') {
-            showCsvUploadResult(response.result);
-            return;
+            activeCsvUploadRequestId = null;
+            return response.result;
           }
           if (response.uploadStatus === 'error') {
-            showCsvUploadResult(response.result);
-            return;
+            activeCsvUploadRequestId = null;
+            const uploadError = new Error(response.result && response.result.message || 'Server gagal memproses file.');
+            uploadError.stopPolling = true;
+            throw uploadError;
           }
         } catch (error) {
           lastError = error.message;
+          if (error.stopPolling) throw error;
           if (error.code === 'AUTH_REQUIRED') {
             activeCsvUploadRequestId = null;
-            document.getElementById('csvUploadButton').disabled = false;
-            return;
+            throw error;
           }
           if (lastError.includes('Aksi tidak dikenali')) {
             activeCsvUploadRequestId = null;
-            document.getElementById('csvUploadButton').disabled = false;
-            message.textContent = 'Apps Script belum mendukung status upload. Deploy ulang versi terbaru googlescript.js.';
-            message.classList.add('error');
-            return;
+            throw new Error('Apps Script belum mendukung status upload. Deploy ulang versi terbaru googlescript.js.');
           }
         }
         await new Promise(resolve => setTimeout(resolve, 1500));
       }
 
-      if (activeCsvUploadRequestId !== requestId) return;
+      if (activeCsvUploadRequestId !== requestId) {
+        throw new Error('Upload dibatalkan.');
+      }
       activeCsvUploadRequestId = null;
-      document.getElementById('csvUploadButton').disabled = false;
-      message.textContent = lastError
+      throw new Error(lastError
         ? `Gagal memeriksa status upload: ${lastError}`
-        : 'Server tidak merespons. Pastikan versi terbaru googlescript.js sudah di-deploy, lalu coba lagi.';
-      message.classList.add('error');
+        : 'Server tidak merespons. Pastikan versi terbaru googlescript.js sudah di-deploy, lalu coba lagi.');
     }
 
     function showCsvUploadResult(result) {
@@ -2026,6 +2064,7 @@
         allRekapData = result.data || [];
         populatePetugasOptions(allRekapData);
         renderDashboard();
+        loadServiceMonthlyData(requestId);
 
         const waktu = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
         document.getElementById('statusText').textContent = `Terhubung • Update ${waktu}`;
@@ -2077,6 +2116,8 @@
       if (chartInstance) chartInstance.destroy();
       const countCtx = document.getElementById('transactionCountChart').getContext('2d');
       if (transactionCountChartInstance) transactionCountChartInstance.destroy();
+      const serviceCtx = document.getElementById('serviceMonthlyChart').getContext('2d');
+      if (serviceProductionChartInstance) serviceProductionChartInstance.destroy();
 
       const labels = data.map(d => formatNamaPetugas(d.namaPetugas));
       const revenues = data.map(d => d.totalPendapatan);
@@ -2150,6 +2191,115 @@
           }
         }
       });
+
+      renderServiceMonthlyChart(serviceCtx);
+    }
+
+    function getServiceTotals(data) {
+      const totals = {};
+      (data || []).forEach(emp => {
+        Object.entries(emp.rincianLayanan || {}).forEach(([layanan, jumlah]) => {
+          const key = String(layanan || 'Tanpa Layanan').trim() || 'Tanpa Layanan';
+          totals[key] = (totals[key] || 0) + (Number(jumlah) || 0);
+        });
+      });
+      return totals;
+    }
+
+    function getServiceMonthlyTotals(selectedNipNik) {
+      return serviceMonthlyData.map(monthData => getServiceTotals((monthData || []).filter(emp =>
+        !selectedNipNik || String(emp.nipNik || '').trim() === selectedNipNik
+      )));
+    }
+
+    function renderServiceMonthlyChart(ctx) {
+      const selectedNipNik = document.getElementById('searchPetugas').value;
+      const monthlyTotals = getServiceMonthlyTotals(selectedNipNik);
+      const serviceTotals = {};
+      monthlyTotals.forEach(month => Object.entries(month).forEach(([layanan, jumlah]) => {
+        serviceTotals[layanan] = (serviceTotals[layanan] || 0) + jumlah;
+      }));
+
+      const layanan = Object.keys(serviceTotals).sort((a, b) =>
+        serviceTotals[b] - serviceTotals[a] || a.localeCompare(b, 'id')
+      );
+      const colors = ['#2563eb', '#ea580c', '#16a34a', '#9333ea', '#0891b2', '#ca8a04', '#dc2626', '#475569'];
+      const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+      serviceProductionChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: monthLabels,
+          datasets: layanan.map((namaLayanan, index) => ({
+            label: namaLayanan,
+            data: monthlyTotals.map(month => month[namaLayanan] || 0),
+            borderColor: colors[index % colors.length],
+            backgroundColor: colors[index % colors.length],
+            borderWidth: 2,
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            tension: 0.25,
+            fill: false
+          }))
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: layanan.length > 0, position: 'top', align: 'start' },
+            tooltip: {
+              callbacks: {
+                label: tooltipContext => `${tooltipContext.dataset.label}: ${formatAngka(tooltipContext.raw)} transaksi`
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { precision: 0, callback: value => formatAngka(value) },
+              title: { display: true, text: 'Jumlah transaksi' }
+            },
+            x: { title: { display: true, text: 'Bulan 2026' } }
+          }
+        }
+      });
+
+      const total = Object.values(serviceTotals).reduce((sum, value) => sum + value, 0);
+      const summary = document.getElementById('serviceProductionSummary');
+      summary.textContent = layanan.length
+        ? `${formatAngka(total)} transaksi dari ${layanan.length} layanan • Januari–Desember 2026`
+        : 'Belum ada transaksi layanan pada tahun 2026';
+    }
+
+    async function loadServiceMonthlyData(requestId) {
+      const monthlyRequestId = ++serviceMonthlyRequestId;
+      const summary = document.getElementById('serviceProductionSummary');
+      summary.textContent = 'Memuat perbandingan Januari–Desember 2026 (0/12)...';
+
+      try {
+        const monthlyData = [];
+        for (let index = 0; index < 12; index += 1) {
+          const month = index + 1;
+          const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'][index];
+          const start = `${SERVICE_COMPARISON_YEAR}-${String(month).padStart(2, '0')}-01`;
+          const endDate = new Date(SERVICE_COMPARISON_YEAR, month, 0);
+          const end = `${SERVICE_COMPARISON_YEAR}-${String(month).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
+          summary.textContent = `Memuat ${monthName} ${SERVICE_COMPARISON_YEAR} (${index + 1}/12)...`;
+          const result = await callDashboardApi('rekap', {
+            tanggalDari: start,
+            tanggalSampai: end
+          }, 60000);
+          monthlyData.push(result.data || []);
+        }
+        serviceMonthlyData = monthlyData;
+        if (requestId !== rekapRequestId || monthlyRequestId !== serviceMonthlyRequestId) return;
+        renderDashboard();
+      } catch (error) {
+        if (requestId !== rekapRequestId || monthlyRequestId !== serviceMonthlyRequestId) return;
+        serviceMonthlyData = [];
+        summary.textContent = `Gagal memuat perbandingan layanan 2026: ${error.message}`;
+      }
     }
 
     function populatePetugasOptions(data) {
