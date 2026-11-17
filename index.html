@@ -579,6 +579,77 @@
       gap: 0.25rem;
     }
 
+    .visitor-stat-card {
+      margin: 1.25rem 0.75rem 0;
+      padding: 0.85rem;
+      border: 1px solid #dbe3ee;
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    .visitor-stat-title {
+      margin-bottom: 0.65rem;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .visitor-stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0;
+      color: var(--secondary);
+      font-size: 0.8rem;
+    }
+
+    .visitor-stat-value {
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .visitor-active-button {
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: #15803d;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+      text-decoration: underline;
+    }
+
+    .visitor-active-button:hover {
+      color: #166534;
+    }
+
+    .visitor-list {
+      display: grid;
+      gap: 0.5rem;
+      max-height: 360px;
+      overflow-y: auto;
+    }
+
+    .visitor-list-item {
+      padding: 0.65rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #f8fafc;
+    }
+
+    .visitor-list-name {
+      font-weight: 700;
+    }
+
+    .visitor-list-meta {
+      margin-top: 0.2rem;
+      color: var(--muted);
+      font-size: 0.78rem;
+    }
+
     /* Loading & Empty States */
     .state-box {
       padding: 3rem 1rem;
@@ -973,6 +1044,17 @@
           <span>Upload File CSV</span>
         </button>
       </nav>
+      <section class="visitor-stat-card" id="visitorStatCard" hidden>
+        <div class="visitor-stat-title">Statistik Pengunjung</div>
+        <div class="visitor-stat-row">
+          <span>Kunjungan hari ini</span>
+          <span class="visitor-stat-value" id="visitorTodayCount">0</span>
+        </div>
+        <div class="visitor-stat-row">
+          <span>Aktif sekarang</span>
+          <button class="visitor-active-button" id="activeVisitorsButton" type="button" onclick="showActiveVisitors()">0</button>
+        </div>
+      </section>
     </aside>
     <button class="sidebar-scrim" type="button" aria-label="Tutup menu" onclick="toggleSidebar()"></button>
 
@@ -1288,6 +1370,22 @@
     </div>
   </div>
 
+  <!-- Modal Pengunjung Aktif -->
+  <div class="modal-backdrop" id="visitorModal">
+    <div class="modal-box" style="max-width: 520px;">
+      <div class="modal-header">
+        <div>
+          <h3 style="font-size: 1.1rem;">Pengunjung Aktif</h3>
+          <p style="font-size: 0.82rem; color: #cbd5e1;">Pengguna yang aktif dalam 2 menit terakhir</p>
+        </div>
+        <button class="modal-close" onclick="closeVisitorModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="visitor-list" id="activeVisitorsList"></div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzl8cPhzgAgWeBTDASHP-8U4woqE94zI4KBEg9M85-oGQ27HOL0yGiLuuno7jtE5fO4/exec';
     const SERVICE_COMPARISON_YEAR = 2026;
@@ -1306,6 +1404,8 @@
     let jsonpRequestId = 0;
     let activeCsvUploadRequestId = null;
     let activeLoginRequestId = null;
+    let visitorPresenceInterval = null;
+    let visitorStatsInterval = null;
 
     const formatRupiah = (angka) => {
       return new Intl.NumberFormat('id-ID', {
@@ -1435,19 +1535,99 @@
     function showAuthenticatedApp(user) {
       document.getElementById('loginView').hidden = true;
       document.getElementById('appLayout').hidden = false;
-      document.getElementById('uploadNavButton').hidden =
-        String(user && user.role || '').trim().toLowerCase() !== 'superuser';
+      const isSuperuser = String(user && user.role || '').trim().toLowerCase() === 'superuser';
+      document.getElementById('uploadNavButton').hidden = !isSuperuser;
+      document.getElementById('visitorStatCard').hidden = !isSuperuser;
       document.getElementById('topbarUser').textContent =
         user && (user.displayName || user.username) || 'DATA TRX ORANGER';
+      startVisitorPresence(isSuperuser);
+    }
+
+    function startVisitorPresence(isSuperuser) {
+      stopVisitorPresence(false);
+      sendVisitorHeartbeat();
+      visitorPresenceInterval = setInterval(sendVisitorHeartbeat, 30000);
+      if (isSuperuser) {
+        loadVisitorStats();
+        visitorStatsInterval = setInterval(loadVisitorStats, 30000);
+      }
+    }
+
+    function stopVisitorPresence(removeFromServer = true) {
+      if (visitorPresenceInterval) clearInterval(visitorPresenceInterval);
+      if (visitorStatsInterval) clearInterval(visitorStatsInterval);
+      visitorPresenceInterval = null;
+      visitorStatsInterval = null;
+      if (removeFromServer && sessionStorage.getItem('orangerSessionToken')) {
+        callDashboardApi('visitor_logout', {}).catch(() => {});
+      }
+    }
+
+    async function sendVisitorHeartbeat() {
+      if (!sessionStorage.getItem('orangerSessionToken')) return;
+      try {
+        await callDashboardApi('visitor_heartbeat', {});
+      } catch (error) {
+        if (error.code === 'AUTH_REQUIRED') handleSessionExpired(error.message);
+      }
+    }
+
+    async function loadVisitorStats() {
+      const card = document.getElementById('visitorStatCard');
+      if (card.hidden) return;
+      try {
+        const result = await callDashboardApi('visitor_stats', {});
+        document.getElementById('visitorTodayCount').textContent = formatAngka(result.totalVisits);
+        document.getElementById('activeVisitorsButton').textContent = formatAngka(result.activeCount);
+        renderActiveVisitors(result.activeVisitors || []);
+      } catch (error) {
+        if (error.code === 'AUTH_REQUIRED') handleSessionExpired(error.message);
+      }
+    }
+
+    function renderActiveVisitors(visitors) {
+      const container = document.getElementById('activeVisitorsList');
+      container.innerHTML = '';
+      if (!visitors.length) {
+        container.textContent = 'Tidak ada pengguna aktif.';
+        return;
+      }
+      visitors.forEach(visitor => {
+        const item = document.createElement('div');
+        item.className = 'visitor-list-item';
+        const name = document.createElement('div');
+        name.className = 'visitor-list-name';
+        name.textContent = visitor.displayName || visitor.username || '-';
+        const meta = document.createElement('div');
+        meta.className = 'visitor-list-meta';
+        const lastSeen = visitor.lastSeen ? new Date(Number(visitor.lastSeen)).toLocaleTimeString('id-ID', {
+          hour: '2-digit', minute: '2-digit', second: '2-digit'
+        }) : '-';
+        meta.textContent = `${visitor.username || '-'} • ${visitor.role || 'user'} • terakhir aktif ${lastSeen}`;
+        item.appendChild(name);
+        item.appendChild(meta);
+        container.appendChild(item);
+      });
+    }
+
+    async function showActiveVisitors() {
+      await loadVisitorStats();
+      document.getElementById('visitorModal').classList.add('active');
+    }
+
+    function closeVisitorModal() {
+      document.getElementById('visitorModal').classList.remove('active');
     }
 
     function handleSessionExpired(message) {
+      stopVisitorPresence(false);
       sessionStorage.removeItem('orangerSessionToken');
       sessionStorage.removeItem('orangerSessionUser');
       showLoginView(message || 'Sesi login berakhir. Silakan masuk kembali.');
     }
 
     function logout() {
+      stopVisitorPresence(true);
       sessionStorage.removeItem('orangerSessionToken');
       sessionStorage.removeItem('orangerSessionUser');
       showLoginView('Anda sudah keluar.');
