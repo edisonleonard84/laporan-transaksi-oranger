@@ -2445,7 +2445,17 @@
 
         if (result.status !== 'success') throw new Error(result.message);
 
-        currentDetailData = result.data || [];
+        const tanggalDari = document.getElementById('filterTanggalDari').value;
+        const tanggalSampai = document.getElementById('filterTanggalSampai').value;
+        currentDetailData = (result.data || []).filter(row => {
+          if (!tanggalDari && !tanggalSampai) return true;
+          const tanggalKirim = getDateInputValue(row.tglKirim);
+          return tanggalKirim &&
+            (!tanggalDari || tanggalKirim >= tanggalDari) &&
+            (!tanggalSampai || tanggalKirim <= tanggalSampai);
+        });
+        document.getElementById('modalSubtitle').textContent =
+          `NIP / NIK: ${nip}${tanggalDari || tanggalSampai ? ` • ${tanggalDari || 'awal'} s.d. ${tanggalSampai || 'akhir'}` : ''}`;
         renderDetailTable(currentDetailData);
       } catch (error) {
         document.getElementById('modalLoading').innerHTML = `<p style="color:#dc2626;">Gagal memuat detail resi: ${error.message}</p>`;
