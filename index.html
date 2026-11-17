@@ -560,6 +560,18 @@
       margin-right: 0.25rem;
     }
 
+    .tag-layanan-clickable {
+      cursor: pointer;
+      font: inherit;
+      color: inherit;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .tag-layanan-clickable:hover {
+      background: #dbeafe;
+      border-color: #60a5fa;
+    }
+
     .service-list {
       display: flex;
       flex-direction: column;
@@ -2407,7 +2419,7 @@
 
       filtered.forEach((emp, idx) => {
         const layananBadges = Object.entries(emp.rincianLayanan)
-          .map(([kode, jml]) => `<span class="tag-layanan"><strong>${kode}</strong>: ${jml}</span>`)
+          .map(([kode, jml]) => `<button class="tag-layanan tag-layanan-clickable" type="button" title="Lihat transaksi layanan ${kode}" onclick="openDetailModal('${emp.nipNik}', '${emp.namaPetugas.replace(/'/g, "\\'")}', '${String(kode).replace(/'/g, "\\'")}')"><strong>${kode}</strong>: ${jml}</button>`)
           .join('');
 
         const tr = document.createElement('tr');
@@ -2432,9 +2444,11 @@
       });
     }
 
-    async function openDetailModal(nip, nama) {
+    async function openDetailModal(nip, nama, layanan = '') {
       document.getElementById('detailModal').classList.add('active');
-      document.getElementById('modalTitle').textContent = `Rincian Transaksi: ${formatNamaPetugas(nama)}`;
+      document.getElementById('modalTitle').textContent = layanan
+        ? `Rincian ${layanan}: ${formatNamaPetugas(nama)}`
+        : `Rincian Transaksi: ${formatNamaPetugas(nama)}`;
       document.getElementById('modalSubtitle').textContent = `NIP / NIK: ${nip}`;
       document.getElementById('searchModalResi').value = '';
       document.getElementById('modalLoading').style.display = 'block';
@@ -2453,9 +2467,12 @@
           return tanggalKirim &&
             (!tanggalDari || tanggalKirim >= tanggalDari) &&
             (!tanggalSampai || tanggalKirim <= tanggalSampai);
-        });
+        }).filter(row => !layanan || String(row.layanan || '').trim() === layanan);
         document.getElementById('modalSubtitle').textContent =
           `NIP / NIK: ${nip}${tanggalDari || tanggalSampai ? ` • ${tanggalDari || 'awal'} s.d. ${tanggalSampai || 'akhir'}` : ''}`;
+        if (layanan) {
+          document.getElementById('modalSubtitle').textContent += ` - Layanan: ${layanan}`;
+        }
         renderDetailTable(currentDetailData);
       } catch (error) {
         document.getElementById('modalLoading').innerHTML = `<p style="color:#dc2626;">Gagal memuat detail resi: ${error.message}</p>`;
