@@ -1535,8 +1535,10 @@
     function showAuthenticatedApp(user) {
       document.getElementById('loginView').hidden = true;
       document.getElementById('appLayout').hidden = false;
-      const isSuperuser = String(user && user.role || '').trim().toLowerCase() === 'superuser';
-      document.getElementById('uploadNavButton').hidden = !isSuperuser;
+      const role = String(user && user.role || '').trim().toLowerCase();
+      const canManageFiles = role === 'superuser' || role === 'admin';
+      const isSuperuser = role === 'superuser';
+      document.getElementById('uploadNavButton').hidden = !canManageFiles;
       document.getElementById('visitorStatCard').hidden = !isSuperuser;
       document.getElementById('topbarUser').textContent =
         user && (user.displayName || user.username) || 'DATA TRX ORANGER';
