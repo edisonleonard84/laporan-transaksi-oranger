@@ -1070,7 +1070,12 @@
 
       <main class="page-content">
         <div class="page-heading">
-          <h1 id="pageTitle">Dashboard</h1>
+          <div style="display:flex; align-items:center; gap:0.75rem;">
+            <h1 id="pageTitle">Dashboard</h1>
+            <button class="btn btn-outline btn-sm" id="refreshDashboardButton" type="button" onclick="refreshDashboard()" title="Muat ulang data dashboard">
+              ↻ Refresh
+            </button>
+          </div>
           <div class="breadcrumb"><span>⌂</span> &nbsp;/&nbsp; <span id="breadcrumbTitle">Dashboard</span></div>
         </div>
 
@@ -1412,6 +1417,8 @@
     let jsonpRequestId = 0;
     let activeCsvUploadRequestId = null;
     let activeLoginRequestId = null;
+    let rekapRefreshTimer = null;
+    let serviceMonthlyLoading = false;
     let visitorPresenceInterval = null;
     let visitorStatsInterval = null;
 
@@ -1505,8 +1512,8 @@
       const currentDate = new Date();
       document.getElementById('reportBulan').value = String(currentDate.getMonth() + 1);
       populateReportYears(currentDate.getFullYear());
-      document.getElementById('filterTanggalDari').addEventListener('change', fetchRekapData);
-      document.getElementById('filterTanggalSampai').addEventListener('change', fetchRekapData);
+      document.getElementById('filterTanggalDari').addEventListener('change', scheduleRekapRefresh);
+      document.getElementById('filterTanggalSampai').addEventListener('change', scheduleRekapRefresh);
       document.getElementById('reportBulan').addEventListener('change', loadReportPetugas);
       document.getElementById('reportTahun').addEventListener('change', loadReportPetugas);
       document.getElementById('reportNipNik').addEventListener('change', loadCurrentReportPage);
@@ -1816,6 +1823,24 @@
       document.getElementById('dashboardView').hidden = false;
       setActivePage('dashboard', 'Dashboard');
       window.scrollTo(0, 0);
+    }
+
+    function scheduleRekapRefresh() {
+      clearTimeout(rekapRefreshTimer);
+      rekapRefreshTimer = setTimeout(() => fetchRekapData(false), 250);
+    }
+
+    async function refreshDashboard() {
+      const button = document.getElementById('refreshDashboardButton');
+      button.disabled = true;
+      button.textContent = '↻ Memuat...';
+      serviceMonthlyData = [];
+      try {
+        await fetchRekapData(true);
+      } finally {
+        button.disabled = false;
+        button.textContent = '↻ Refresh';
+      }
     }
 
     function showCsvUpload() {
@@ -2257,7 +2282,7 @@
       return `${date.getFullYear()}-${month}-${day}`;
     }
 
-    async function fetchRekapData() {
+    async function fetchRekapData(forceRefresh = false) {
       const tanggalDari = document.getElementById('filterTanggalDari').value;
       const tanggalSampai = document.getElementById('filterTanggalSampai').value;
       const requestId = ++rekapRequestId;
@@ -2274,7 +2299,11 @@
       }
 
       try {
-        const result = await callDashboardApi('rekap', { tanggalDari, tanggalSampai });
+        const result = await callDashboardApi('rekap', {
+          tanggalDari,
+          tanggalSampai,
+          refresh: forceRefresh ? Date.now() : ''
+        });
         if (requestId !== rekapRequestId) return;
 
         if (result.status !== 'success') {
@@ -2288,7 +2317,9 @@
         allRekapData = result.data || [];
         populatePetugasOptions(allRekapData);
         renderDashboard();
-        loadServiceMonthlyData(requestId);
+        if (!serviceMonthlyData.length && !serviceMonthlyLoading) {
+          loadServiceMonthlyData(requestId);
+        }
 
         const waktu = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
         document.getElementById('statusText').textContent = `Terhubung • Update ${waktu}`;
@@ -2523,6 +2554,8 @@
     }
 
     async function loadServiceMonthlyData(requestId) {
+      if (serviceMonthlyLoading) return;
+      serviceMonthlyLoading = true;
       const monthlyRequestId = ++serviceMonthlyRequestId;
       const summary = document.getElementById('serviceProductionSummary');
       summary.textContent = 'Memuat perbandingan Januari–Desember 2026 (0/12)...';
@@ -2550,6 +2583,8 @@
         if (requestId !== rekapRequestId || monthlyRequestId !== serviceMonthlyRequestId) return;
         serviceMonthlyData = [];
         summary.textContent = `Gagal memuat perbandingan layanan 2026: ${error.message}`;
+      } finally {
+        serviceMonthlyLoading = false;
       }
     }
 
