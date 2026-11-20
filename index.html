@@ -7,19 +7,16 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --primary: #4f46e5;
-      --primary-dark: #4338ca;
-      --accent: #7c3aed;
-      --secondary: #1e293b;
-      --bg: #eef2ff;
-      --card: rgba(255, 255, 255, 0.84);
-      --card-solid: #ffffff;
+      --primary: #1672f9;
+      --primary-dark: #075bd5;
+      --secondary: #374151;
+      --bg: #e2e2e2;
+      --card: #ffffff;
       --text: #0f172a;
       --muted: #64748b;
-      --border: rgba(226, 232, 240, 0.9);
+      --border: #e2e8f0;
       --success: #16a34a;
       --info: #0284c7;
-      --shadow-v35: 0 10px 30px -10px rgba(79, 70, 229, 0.14), 0 4px 12px -4px rgba(15, 23, 42, 0.06);
     }
 
     * {
@@ -30,41 +27,11 @@
     }
 
     body {
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at 12% 10%, rgba(124, 58, 237, 0.10), transparent 42%),
-        radial-gradient(circle at 88% 15%, rgba(79, 70, 229, 0.12), transparent 45%),
-        linear-gradient(135deg, #f1f5f9 0%, #eef2ff 50%, #f5f3ff 100%);
+      background-color: var(--bg);
       color: var(--text);
       line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
     }
 
-    /* Animasi V35 */
-    @keyframes v35FadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .v35-animate {
-      animation: v35FadeUp 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
-
-    .v35-glass {
-      background: var(--card);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.85);
-      box-shadow: var(--shadow-v35);
-    }
-
-    /* Login View */
     .login-page {
       position: relative;
       display: flex;
@@ -73,10 +40,8 @@
       min-height: 100vh;
       padding: 2rem clamp(1rem, 9vw, 9rem) 2rem 2rem;
       overflow: hidden;
-      background-color: #181826;
-      background-image:
-        linear-gradient(120deg, rgba(15, 23, 42, 0.55), rgba(79, 70, 229, 0.35)),
-        url('background.jpg');
+      background-color: #20201e;
+      background-image: linear-gradient(90deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.08)), url('background.jpg');
       background-position: center;
       background-size: cover;
       background-repeat: no-repeat;
@@ -89,22 +54,20 @@
 
     .login-card {
       width: 100%;
-      max-width: 370px;
-      padding: 1.6rem 1.45rem 1.7rem;
-      border: 1px solid rgba(255, 255, 255, 0.75);
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(16px);
-      box-shadow: 0 24px 50px rgba(15, 23, 42, 0.32);
-      animation: v35FadeUp 0.35s ease both;
+      max-width: 350px;
+      padding: 1.25rem 1.1rem 1.35rem;
+      border: 0;
+      border-radius: 0;
+      background: #fff;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.28);
     }
 
     .login-brand {
-      margin-bottom: 0.75rem;
-      color: var(--primary);
-      font-size: 0.76rem;
+      margin-bottom: 1.15rem;
+      color: #25354a;
+      font-size: 0.78rem;
       font-weight: 800;
-      letter-spacing: 0.08em;
+      letter-spacing: 0;
       text-align: center;
       text-transform: uppercase;
     }
@@ -114,64 +77,57 @@
     }
 
     .login-description {
-      margin-bottom: 1.15rem;
+      margin-bottom: 1rem;
       color: #64748b;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       text-align: center;
     }
 
     .login-form {
       display: grid;
-      gap: 0.8rem;
+      gap: 0.72rem;
     }
 
     .login-form label {
-      margin-bottom: -0.45rem;
+      margin-bottom: -0.5rem;
       color: #334155;
-      font-size: 0.76rem;
-      font-weight: 600;
+      font-size: 0.78rem;
+      font-weight: 500;
     }
 
     .login-form input {
       width: 100%;
-      min-height: 2.35rem;
-      padding: 0.5rem 0.75rem;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      background: #ffffff;
-      color: #0f172a;
-      font-size: 0.85rem;
+      min-height: 2.15rem;
+      padding: 0.45rem 0.6rem;
+      border: 1px solid #d7dee8;
+      border-radius: 0;
+      color: #1e293b;
+      font-size: 0.82rem;
       outline: none;
-      transition: border-color 0.18s, box-shadow 0.18s;
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
 
     .login-form input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+      border-color: #78aafc;
+      box-shadow: 0 0 0 2px rgba(22, 114, 249, 0.12);
     }
 
     .login-submit,
     .logout-button {
       border: 0;
-      border-radius: 10px;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 6px;
+      background: var(--primary);
       color: #fff;
       cursor: pointer;
       font: inherit;
       font-weight: 600;
-      transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
-    }
-
-    .login-submit:hover,
-    .logout-button:hover {
-      box-shadow: 0 8px 18px -4px rgba(79, 70, 229, 0.45);
-      transform: translateY(-1px);
     }
 
     .login-submit {
-      margin-top: 0.5rem;
-      padding: 0.65rem 1rem;
-      font-size: 0.85rem;
+      margin-top: 0.55rem;
+      padding: 0.55rem 1rem;
+      border-radius: 0;
+      font-size: 0.82rem;
     }
 
     .login-submit:disabled {
@@ -181,9 +137,9 @@
 
     .login-message {
       min-height: 1rem;
-      margin-top: 0.15rem;
+      margin-top: 0.1rem;
       color: var(--muted);
-      font-size: 0.82rem;
+      font-size: 0.85rem;
     }
 
     .login-message.error {
@@ -191,17 +147,10 @@
     }
 
     .logout-button {
-      padding: 0.45rem 0.85rem;
+      padding: 0.45rem 0.7rem;
       font-size: 0.8rem;
-      background: rgba(255, 255, 255, 0.16);
-      border: 1px solid rgba(255, 255, 255, 0.28);
     }
 
-    .logout-button:hover {
-      background: rgba(255, 255, 255, 0.26);
-    }
-
-    /* Layout Sidebar & Topbar V35 */
     .app-layout {
       min-height: 100vh;
     }
@@ -211,74 +160,64 @@
       inset: 0 auto 0 0;
       z-index: 20;
       display: flex;
-      width: 256px;
+      width: 248px;
       flex-direction: column;
-      background: rgba(255, 255, 255, 0.88);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-right: 1px solid rgba(226, 232, 240, 0.85);
-      box-shadow: 4px 0 24px rgba(15, 23, 42, 0.05);
-      transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+      background: #fff;
+      box-shadow: 2px 0 8px rgba(15, 23, 42, 0.16);
+      transition: transform 0.2s ease;
     }
 
     .sidebar-brand {
       display: flex;
-      min-height: 64px;
+      min-height: 60px;
       align-items: center;
-      gap: 0.6rem;
       padding: 0 1.25rem;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
+      background: var(--primary);
       color: #fff;
-      font-size: 1.05rem;
+      font-size: 1.15rem;
       font-weight: 800;
       letter-spacing: 0.08em;
     }
 
     .sidebar-account {
-      margin: 0.85rem 0.75rem 0.85rem;
-      padding: 0.65rem 0.75rem;
-      border-radius: 12px;
-      background: rgba(79, 70, 229, 0.06);
-      border: 1px solid rgba(79, 70, 229, 0.12);
-      color: #4338ca;
-      font-size: 0.76rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
+      margin: 0.8rem 0.35rem 1rem;
+      padding: 0.75rem 0.5rem 1rem;
+      border-bottom: 1px solid #d8dee8;
+      color: #59616c;
+      font-size: 0.82rem;
     }
 
     .sidebar-nav {
       display: grid;
-      gap: 0.28rem;
-      padding: 0 0.65rem;
+      gap: 0.2rem;
+      padding: 0 0.35rem;
     }
 
     .nav-link {
       display: flex;
       width: 100%;
-      min-height: 44px;
+      min-height: 42px;
       align-items: center;
       gap: 0.75rem;
-      padding: 0.6rem 0.85rem;
+      padding: 0.6rem 0.8rem;
       border: 0;
-      border-radius: 12px;
+      border-radius: 3px;
       background: transparent;
-      color: #475569;
+      color: #414852;
       cursor: pointer;
       font-size: 0.88rem;
       text-align: left;
-      transition: background 0.16s, color 0.16s, transform 0.15s;
+      transition: background 0.15s, color 0.15s;
     }
 
-    .nav-link:hover {
-      background: rgba(79, 70, 229, 0.07);
-      color: var(--primary);
+    .nav-link:hover,
+    .nav-link[aria-current="page"] {
+      background: #f0f0f0;
+      color: #111827;
     }
 
     .nav-link[aria-current="page"] {
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      color: #ffffff;
       font-weight: 600;
-      box-shadow: 0 6px 16px -4px rgba(79, 70, 229, 0.45);
     }
 
     #uploadNavButton[hidden] {
@@ -294,8 +233,7 @@
 
     .app-main {
       min-height: 100vh;
-      margin-left: 256px;
-      transition: margin-left 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+      margin-left: 248px;
     }
 
     .topbar {
@@ -303,72 +241,57 @@
       top: 0;
       z-index: 10;
       display: flex;
-      min-height: 64px;
+      min-height: 60px;
       align-items: center;
       gap: 1rem;
-      padding: 0 1.35rem;
-      background: rgba(30, 41, 59, 0.88);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0 1.25rem;
+      background: var(--primary);
       color: #fff;
-      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+      box-shadow: 0 2px 5px rgba(15, 23, 42, 0.12);
     }
 
     .menu-toggle {
       display: inline-flex;
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       align-items: center;
       justify-content: center;
       border: 0;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.1);
+      background: transparent;
       color: #fff;
       cursor: pointer;
-      font-size: 1.15rem;
-      transition: background 0.15s;
-    }
-
-    .menu-toggle:hover {
-      background: rgba(255, 255, 255, 0.18);
+      font-size: 1.25rem;
     }
 
     .topbar-title {
       flex: 1;
-      font-size: 0.96rem;
+      font-size: 0.95rem;
       font-weight: 600;
-      letter-spacing: 0.01em;
     }
 
     .topbar-user {
-      color: rgba(255, 255, 255, 0.9);
+      color: rgba(255, 255, 255, 0.88);
       font-size: 0.82rem;
-      font-weight: 500;
     }
 
     .badge-status {
       display: flex;
       align-items: center;
-      gap: 0.45rem;
-      padding: 0.25rem 0.65rem;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.12);
-      color: rgba(255, 255, 255, 0.95);
-      font-size: 0.76rem;
+      gap: 0.5rem;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.78rem;
     }
 
     .dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background-color: #4ade80;
-      box-shadow: 0 0 8px #4ade80;
+      background-color: #86efac;
     }
 
     .page-content {
-      min-height: calc(100vh - 64px);
-      padding: 1.25rem 1.4rem 2.2rem;
+      min-height: calc(100vh - 60px);
+      padding: 1rem 1.25rem 2rem;
     }
 
     .page-heading {
@@ -376,24 +299,17 @@
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
-      margin-bottom: 1.2rem;
+      margin-bottom: 1rem;
     }
 
     .page-heading h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: #0f172a;
+      font-size: 1.45rem;
+      font-weight: 500;
     }
 
     .breadcrumb {
-      padding: 0.3rem 0.75rem;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.72);
-      border: 1px solid rgba(255, 255, 255, 0.9);
-      color: #475569;
-      font-size: 0.8rem;
-      font-weight: 500;
+      color: #526170;
+      font-size: 0.84rem;
     }
 
     .container {
@@ -403,19 +319,18 @@
       padding: 0;
     }
 
-    /* Filter Bar V35 */
+    /* Filter Bar */
     .filter-card {
       background: var(--card);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.85);
-      border-radius: 18px;
-      padding: 1.1rem 1.3rem;
-      margin-bottom: 1.35rem;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
       display: flex;
       flex-wrap: wrap;
       gap: 1rem;
       align-items: flex-end;
-      box-shadow: var(--shadow-v35);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     }
 
     .form-group {
@@ -431,68 +346,61 @@
     }
 
     label {
-      font-size: 0.74rem;
-      font-weight: 700;
+      font-size: 0.78rem;
+      font-weight: 600;
       color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: 0.04em;
     }
 
     select, input {
-      padding: 0.58rem 0.8rem;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      font-size: 0.88rem;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.9rem;
       color: var(--text);
-      background: rgba(255, 255, 255, 0.92);
-      transition: border-color 0.16s, box-shadow 0.16s;
+      background: #fff;
     }
 
     select:focus, input:focus {
       outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
     }
 
     .btn {
       padding: 0.58rem 1.1rem;
       border: none;
-      border-radius: 10px;
-      font-size: 0.86rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
       font-weight: 600;
       cursor: pointer;
-      transition: transform 0.15s, background 0.2s, box-shadow 0.2s;
+      transition: background 0.2s;
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--primary), var(--accent));
+      background: var(--primary);
       color: #fff;
     }
 
     .btn-primary:hover {
-      box-shadow: 0 6px 16px -4px rgba(79, 70, 229, 0.45);
-      transform: translateY(-1px);
+      background: var(--primary-dark);
     }
 
     .btn-outline {
-      background: rgba(255, 255, 255, 0.88);
+      background: #fff;
       color: var(--secondary);
-      border: 1px solid #cbd5e1;
+      border: 1px solid var(--border);
     }
 
     .btn-outline:hover {
-      background: #ffffff;
-      border-color: var(--primary);
-      color: var(--primary);
+      background: #f1f5f9;
     }
 
     .btn-sm {
-      padding: 0.38rem 0.75rem;
-      font-size: 0.78rem;
-      border-radius: 9px;
+      padding: 0.35rem 0.7rem;
+      font-size: 0.8rem;
     }
 
     .btn:disabled {
@@ -500,88 +408,54 @@
       opacity: 0.65;
     }
 
-    /* KPI Summary Cards V35 */
+    /* KPI Summary Cards */
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
-      gap: 1.1rem;
-      margin-bottom: 1.35rem;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
     }
 
     .kpi-card {
-      position: relative;
-      overflow: hidden;
       background: var(--card);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.88);
-      border-radius: 20px;
-      padding: 1.25rem 1.3rem;
-      box-shadow: var(--shadow-v35);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      animation: v35FadeUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.15rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      border-left: 4px solid var(--primary);
     }
 
-    .kpi-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 16px 34px -10px rgba(79, 70, 229, 0.2);
-    }
-
-    .kpi-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--primary), var(--accent));
-    }
-
-    .kpi-card.blue::before {
-      background: linear-gradient(90deg, #0284c7, #38bdf8);
-    }
-
-    .kpi-card.green::before {
-      background: linear-gradient(90deg, #16a34a, #4ade80);
-    }
-
-    .kpi-card.dark::before {
-      background: linear-gradient(90deg, #1e293b, #64748b);
-    }
+    .kpi-card.blue { border-left-color: var(--info); }
+    .kpi-card.green { border-left-color: var(--success); }
+    .kpi-card.dark { border-left-color: var(--secondary); }
 
     .kpi-title {
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       color: var(--muted);
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-bottom: 0.4rem;
+      font-weight: 600;
+      margin-bottom: 0.35rem;
     }
 
     .kpi-value {
-      font-size: 1.5rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
+      font-size: 1.45rem;
+      font-weight: 700;
       color: var(--text);
     }
 
     .kpi-sub {
       font-size: 0.78rem;
       color: var(--muted);
-      margin-top: 0.35rem;
+      margin-top: 0.25rem;
     }
 
-    /* Chart Section V35 */
+    /* Chart Section */
     .chart-card {
       background: var(--card);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.88);
-      border-radius: 20px;
-      padding: 1.35rem 1.45rem;
-      margin-bottom: 1.35rem;
-      box-shadow: var(--shadow-v35);
-      animation: v35FadeUp 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     }
 
     .section-header {
@@ -596,46 +470,12 @@
     .section-header h2 {
       font-size: 1.05rem;
       font-weight: 700;
-      color: #0f172a;
     }
 
     .chart-wrapper {
       position: relative;
-      height: 270px;
+      height: 260px;
       width: 100%;
-    }
-
-    .chart-wrapper canvas {
-      display: block;
-      width: 100% !important;
-      height: 100% !important;
-    }
-
-    .chart-loading {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.65rem;
-      flex-direction: column;
-      padding: 1rem;
-      background: rgba(255, 255, 255, 0.72);
-      color: var(--muted);
-      font-size: 0.82rem;
-      text-align: center;
-      transition: opacity 0.2s ease;
-    }
-
-    .chart-loading[hidden] {
-      display: none;
-    }
-
-    .chart-loading .spinner {
-      width: 26px;
-      height: 26px;
-      margin: 0;
     }
 
     .chart-summary {
@@ -657,21 +497,18 @@
       min-width: 180px;
     }
 
-    /* Table V35 */
+    /* Table */
     .table-card {
       background: var(--card);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.88);
-      border-radius: 20px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
       overflow: hidden;
-      box-shadow: var(--shadow-v35);
-      animation: v35FadeUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     }
 
     .table-top {
-      padding: 1.05rem 1.35rem;
-      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -686,32 +523,27 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.86rem;
+      font-size: 0.88rem;
       text-transform: uppercase;
     }
 
     th, td {
-      padding: 0.78rem 1rem;
+      padding: 0.75rem 1rem;
       text-align: left;
-      border-bottom: 1px solid rgba(226, 232, 240, 0.75);
+      border-bottom: 1px solid var(--border);
       white-space: nowrap;
     }
 
     th {
-      background: rgba(241, 245, 249, 0.85);
-      font-weight: 700;
-      color: #334155;
-      font-size: 0.76rem;
-      letter-spacing: 0.04em;
+      background: #f1f5f9;
+      font-weight: 600;
+      color: var(--secondary);
+      font-size: 0.8rem;
       text-transform: uppercase;
     }
 
-    tbody tr {
-      transition: background 0.14s ease;
-    }
-
     tbody tr:hover {
-      background-color: rgba(79, 70, 229, 0.05);
+      background-color: #fff7ed;
     }
 
     .text-right { text-align: right; }
@@ -720,50 +552,47 @@
 
     .tag-layanan {
       display: inline-block;
-      background: rgba(79, 70, 229, 0.08);
-      border: 1px solid rgba(79, 70, 229, 0.22);
-      color: #3730a3;
-      padding: 0.15rem 0.5rem;
-      border-radius: 999px;
-      font-size: 0.74rem;
-      font-weight: 600;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
       margin-right: 0.25rem;
     }
 
     .tag-layanan-clickable {
       cursor: pointer;
       font: inherit;
-      transition: background 0.15s, border-color 0.15s, transform 0.12s;
+      color: inherit;
+      transition: background 0.15s, border-color 0.15s;
     }
 
     .tag-layanan-clickable:hover {
-      background: rgba(79, 70, 229, 0.18);
-      border-color: var(--primary);
-      transform: translateY(-1px);
+      background: #dbeafe;
+      border-color: #60a5fa;
     }
 
     .service-list {
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      gap: 0.28rem;
+      gap: 0.25rem;
     }
 
     .visitor-stat-card {
-      margin: 1.15rem 0.75rem 0;
-      padding: 0.9rem;
-      border: 1px solid rgba(79, 70, 229, 0.16);
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.75);
+      margin: 1.25rem 0.75rem 0;
+      padding: 0.85rem;
+      border: 1px solid #dbe3ee;
+      border-radius: 8px;
+      background: #f8fafc;
     }
 
     .visitor-stat-title {
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.65rem;
       color: var(--muted);
       font-size: 0.72rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
 
     .visitor-stat-row {
@@ -779,7 +608,7 @@
     .visitor-stat-value {
       color: var(--text);
       font-size: 1rem;
-      font-weight: 800;
+      font-weight: 700;
     }
 
     .visitor-active-button {
@@ -789,7 +618,7 @@
       color: #15803d;
       cursor: pointer;
       font: inherit;
-      font-weight: 800;
+      font-weight: 700;
       text-decoration: underline;
     }
 
@@ -805,9 +634,9 @@
     }
 
     .visitor-list-item {
-      padding: 0.65rem 0.8rem;
+      padding: 0.65rem 0.75rem;
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 6px;
       background: #f8fafc;
     }
 
@@ -829,12 +658,12 @@
     }
 
     .spinner {
-      width: 34px;
-      height: 34px;
-      border: 3px solid rgba(79, 70, 229, 0.16);
+      width: 32px;
+      height: 32px;
+      border: 3px solid #e2e8f0;
       border-top-color: var(--primary);
       border-radius: 50%;
-      animation: spin 0.75s linear infinite;
+      animation: spin 0.8s linear infinite;
       margin: 0 auto 0.75rem;
     }
 
@@ -842,12 +671,11 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Modal Detail Resi V35 */
+    /* Modal Detail Resi */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.55);
-      backdrop-filter: blur(6px);
+      background: rgba(15, 23, 42, 0.6);
       display: none;
       align-items: center;
       justify-content: center;
@@ -862,19 +690,18 @@
     .modal-box {
       background: #fff;
       width: 100%;
-      max-width: 1060px;
+      max-width: 1050px;
       max-height: 88vh;
-      border-radius: 20px;
+      border-radius: 12px;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      box-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.32);
-      animation: v35FadeUp 0.25s ease both;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
     }
 
     .modal-header {
       padding: 1rem 1.5rem;
-      background: linear-gradient(135deg, #1e293b, var(--primary));
+      background: var(--secondary);
       color: #fff;
       display: flex;
       justify-content: space-between;
@@ -882,13 +709,10 @@
     }
 
     .modal-close {
-      background: rgba(255, 255, 255, 0.14);
+      background: none;
       border: none;
-      border-radius: 10px;
-      width: 34px;
-      height: 34px;
       color: #fff;
-      font-size: 1.35rem;
+      font-size: 1.5rem;
       cursor: pointer;
       line-height: 1;
     }
@@ -907,13 +731,12 @@
       flex-wrap: wrap;
       align-items: flex-end;
       gap: 1rem;
-      padding: 1.05rem 1.25rem;
+      padding: 1rem 1.25rem;
       margin-bottom: 1rem;
       background: var(--card);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.88);
-      border-radius: 18px;
-      box-shadow: var(--shadow-v35);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     }
 
     .monthly-field {
@@ -926,23 +749,21 @@
     .monthly-report-card {
       overflow: hidden;
       background: var(--card);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.88);
-      border-radius: 20px;
-      box-shadow: var(--shadow-v35);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     }
 
     .monthly-report-heading {
-      padding: 1.05rem 1.25rem;
-      background: linear-gradient(135deg, #fef08a, #fde047);
-      color: #0f172a;
+      padding: 1rem 1.25rem;
+      background: #fff200;
+      color: #111827;
     }
 
     .monthly-report-heading h2 {
       margin-bottom: 0.75rem;
       text-align: center;
       font-size: 1rem;
-      font-weight: 800;
       text-transform: uppercase;
     }
 
@@ -962,11 +783,11 @@
     .monthly-table th,
     .monthly-table td {
       padding: 0.65rem 0.75rem;
-      border: 1px solid rgba(226, 232, 240, 0.85);
+      border: 1px solid var(--border);
     }
 
     .monthly-table th {
-      background: rgba(254, 240, 138, 0.65);
+      background: #ffd966;
       text-transform: uppercase;
     }
 
@@ -989,18 +810,17 @@
     }
 
     .upload-card {
-      max-width: 780px;
-      padding: 1.6rem;
+      max-width: 760px;
+      padding: 1.5rem;
       background: var(--card);
-      backdrop-filter: blur(14px);
-      border: 1px solid rgba(255, 255, 255, 0.88);
-      border-radius: 20px;
-      box-shadow: var(--shadow-v35);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
     }
 
     .upload-card h2 {
       margin-bottom: 0.5rem;
-      font-size: 1.12rem;
+      font-size: 1.1rem;
     }
 
     .upload-description {
@@ -1016,18 +836,18 @@
 
     .upload-form input[type="file"] {
       width: 100%;
-      padding: 0.8rem;
-      border: 1.5px dashed rgba(79, 70, 229, 0.35);
-      border-radius: 14px;
-      background: rgba(248, 250, 252, 0.85);
+      padding: 0.75rem;
+      border: 1px dashed #94a3b8;
+      border-radius: 8px;
+      background: #f8fafc;
     }
 
     .upload-submit {
       width: fit-content;
-      padding: 0.68rem 1.15rem;
+      padding: 0.65rem 1rem;
       border: 0;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 6px;
+      background: var(--primary);
       color: #fff;
       cursor: pointer;
       font: inherit;
@@ -1047,7 +867,7 @@
     .upload-message.error,
     .upload-message.success {
       padding: 0.65rem 0.8rem;
-      border-radius: 10px;
+      border-radius: 6px;
     }
 
     .upload-message.error {
@@ -1121,7 +941,7 @@
       }
 
       .login-card {
-        max-width: 350px;
+        max-width: 340px;
       }
 
       .sidebar {
@@ -1158,13 +978,13 @@
       }
 
       .page-content {
-        padding: 0.9rem 0.75rem 1.5rem;
+        padding: 0.85rem 0.75rem 1.5rem;
       }
 
       .page-heading {
         align-items: flex-start;
         flex-direction: column;
-        gap: 0.25rem;
+        gap: 0.15rem;
       }
 
       .page-heading h1 {
@@ -1180,199 +1000,13 @@
         font-size: 0.88rem;
       }
     }
-    /* Carely dashboard layout applied to Oranger */
-    :root {
-      --primary: #6878e9;
-      --primary-dark: #5364d5;
-      --accent: #a18cf5;
-      --secondary: #242c4f;
-      --bg: #f5f6fb;
-      --card: #ffffff;
-      --card-solid: #ffffff;
-      --text: #202638;
-      --muted: #9299ad;
-      --border: #eceef5;
-      --shadow-v35: 0 14px 35px rgba(44, 49, 93, 0.07);
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    .app-layout { background: var(--bg); }
-
-    .sidebar {
-      width: 76px;
-      align-items: center;
-      padding: 25px 0;
-      background: #202744;
-      border-right: 0;
-      box-shadow: none;
-    }
-
-    .sidebar-brand {
-      min-height: 0;
-      width: 31px;
-      height: 31px;
-      justify-content: center;
-      padding: 0;
-      margin-bottom: 46px;
-      border-radius: 10px;
-      background: #7081f3;
-      box-shadow: 0 8px 20px #14182b;
-      font-size: 0;
-      letter-spacing: 0;
-    }
-
-    .sidebar-brand span { font-size: 0; }
-    .sidebar-brand span::after { content: '✦'; font-size: 20px; }
-    .sidebar-account { display: none; }
-    .sidebar-nav { width: 100%; display: grid; gap: 18px; padding: 0; }
-
-    .nav-link {
-      position: relative;
-      width: 38px;
-      min-height: 38px;
-      justify-self: center;
-      justify-content: center;
-      gap: 0;
-      padding: 0;
-      border-radius: 12px;
-      color: #9ca6cf;
-      font-size: 0;
-    }
-
-    .nav-link:hover { background: #343d68; color: #fff; }
-    .nav-link[aria-current="page"] {
-      background: #343d68;
-      color: #fff;
-      box-shadow: none;
-    }
-    .nav-link[aria-current="page"]::before {
-      content: '';
-      position: absolute;
-      left: -19px;
-      width: 3px;
-      height: 21px;
-      border-radius: 99px;
-      background: #91a0ff;
-    }
-    .nav-icon { width: auto; font-size: 17px; line-height: 1; }
-
-    .visitor-stat-card {
-      width: 58px;
-      margin: auto 0 0;
-      padding: 0.5rem 0.25rem;
-      border: 0;
-      border-radius: 12px;
-      background: #343d68;
-      color: #dfe4ff;
-      text-align: center;
-    }
-    .visitor-stat-title { font-size: 0; margin: 0; }
-    .visitor-stat-title::after { content: '◉'; font-size: 13px; }
-    .visitor-stat-row { display: none; }
-
-    .app-main { margin-left: 76px; }
-    .topbar {
-      min-height: 76px;
-      padding: 0 42px;
-      background: var(--bg);
-      border-bottom: 0;
-      color: var(--text);
-      box-shadow: none;
-    }
-    .menu-toggle {
-      display: none;
-      background: #fff;
-      color: var(--secondary);
-    }
-    .topbar-title { color: var(--text); font-size: 0; }
-    .topbar-title::before { content: 'Oranger'; font-size: 12px; font-weight: 700; }
-    .topbar-user { color: #747b91; font-size: 11px; }
-    .badge-status { padding: 0.35rem 0.75rem; background: #fff; border: 1px solid var(--border); color: #747b91; box-shadow: 0 5px 18px rgba(44,49,93,.04); }
-    .dot { width: 7px; height: 7px; background: #66c6ad; box-shadow: 0 0 8px #66c6ad; }
-    .logout-button { padding: 0; background: transparent; border: 0; color: #8990a5; font-size: 11px; }
-    .logout-button:hover { background: transparent; color: #e27789; box-shadow: none; transform: none; }
-
-    .page-content { min-height: calc(100vh - 76px); padding: 0 42px 34px; }
-    .page-heading { margin-bottom: 28px; align-items: flex-end; }
-    .page-heading h1 {
-      margin-bottom: 4px;
-      font-family: Georgia, serif;
-      font-size: 27px;
-      font-weight: 500;
-      letter-spacing: -0.8px;
-    }
-    .page-heading h1::after { content: ''; }
-    .breadcrumb { padding: 0; background: transparent; border: 0; color: var(--muted); font-size: 12px; }
-    .breadcrumb span:first-child { display: none; }
-    #breadcrumbTitle::before { content: 'Dashboard'; }
-    #breadcrumbTitle { font-size: 0; }
-    #breadcrumbTitle::before { font-size: 12px; }
-    #refreshDashboardButton { border: 1px solid var(--border); background: #fff; color: #798197; }
-
-    .container { max-width: none; margin-bottom: 1rem; }
-    .filter-card, .kpi-card, .chart-card, .table-card {
-      border: 1px solid #f0f1f7;
-      border-radius: 14px;
-      background: #fff;
-      box-shadow: var(--shadow-v35);
-      backdrop-filter: none;
-    }
-    .filter-card { align-items: flex-end; gap: 16px; padding: 18px; margin-bottom: 16px; }
-    .form-group { min-width: 160px; gap: 0.35rem; }
-    .form-group.grow { min-width: 220px; }
-    label { color: var(--muted); }
-    select, input { border-color: var(--border); background: #fff; border-radius: 9px; }
-    select:focus, input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(104,120,233,.12); }
-
-    .kpi-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 16px; }
-    .kpi-card { min-height: 131px; padding: 18px; }
-    .kpi-card::before { height: 0; }
-    .kpi-card.blue::before, .kpi-card.green::before, .kpi-card.dark::before { height: 0; }
-    .kpi-title { color: #8f96aa; font-size: 11px; }
-    .kpi-value { margin-top: 20px; color: var(--text); font-size: 25px; letter-spacing: -1px; }
-    .kpi-sub { color: #5eb59f; font-size: 10px; }
-    .kpi-card:nth-child(2) .kpi-sub, .kpi-card:nth-child(3) .kpi-sub, .kpi-card:nth-child(4) .kpi-sub { color: #9299ad; }
-
-    .chart-card { padding: 18px; margin-bottom: 16px; }
-    .section-header { margin-bottom: 15px; }
-    .section-header h2 { font-size: 13px; }
-    .chart-summary { font-size: 10px; }
-    .chart-wrapper { height: 250px; }
-    .table-card { overflow: hidden; }
-    .table-top { padding: 18px; }
-    table { font-size: 0.78rem; }
-    th { background: #f7f8fc; color: #727a90; }
-    tbody tr:hover { background: #f7f8ff; }
-
-    @media (max-width: 1050px) {
-      .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-    @media (max-width: 700px) {
-      .sidebar { width: 58px; }
-      .sidebar-brand { margin-bottom: 32px; }
-      .nav-link[aria-current="page"]::before { left: -10px; }
-      .app-main { margin-left: 58px; }
-      .topbar { min-height: 62px; padding: 0 15px; }
-      .menu-toggle { display: inline-flex; }
-      .topbar-user, .badge-status, .logout-button { display: none; }
-      .page-content { min-height: calc(100vh - 62px); padding: 20px 15px 28px; }
-      .page-heading { align-items: flex-start; flex-direction: column; margin-bottom: 20px; }
-      .kpi-grid { grid-template-columns: 1fr; }
-      .filter-card { align-items: stretch; flex-direction: column; }
-      .form-group, .form-group.grow { min-width: 0; width: 100%; }
-      .chart-wrapper { height: 210px; }
-    }
   </style>
 </head>
 <body>
 
   <section class="login-page" id="loginView">
     <div class="login-card">
-      <div class="login-brand">ORANGER V35 • DATA TRANSAKSI KIBANA</div>
+      <div class="login-brand">DATA TRANSAKSI KIBANA ORANGER</div>
       <h1>Masuk ke Dashboard</h1>
       <p class="login-description">Login Menggunakan NIK Oranger / BM</p>
       <form class="login-form" id="loginForm">
@@ -1388,9 +1022,7 @@
 
   <div class="app-layout" id="appLayout" hidden>
     <aside class="sidebar" id="sidebar">
-      <div class="sidebar-brand">
-        <span>✦ ORANGER V35</span>
-      </div>
+      <div class="sidebar-brand">ORANGER</div>
       <div class="sidebar-account">DATA TRX ORANGER</div>
       <nav class="sidebar-nav" aria-label="Navigasi utama">
         <button class="nav-link" type="button" data-page="dashboard" aria-current="page" onclick="showDashboard()">
@@ -1447,253 +1079,250 @@
           <div class="breadcrumb"><span>⌂</span> &nbsp;/&nbsp; <span id="breadcrumbTitle">Dashboard</span></div>
         </div>
 
-        <div class="container v35-animate" id="dashboardView">
-          <!-- Filter Kontrol -->
-          <div class="filter-card">
-            <div class="form-group">
-              <label for="filterTanggalDari">Tanggal Awal</label>
-              <input id="filterTanggalDari" type="date" />
-            </div>
+  <div class="container" id="dashboardView">
+    <!-- Filter Kontrol -->
+    <div class="filter-card">
+      <div class="form-group">
+        <label for="filterTanggalDari">Tanggal Awal</label>
+        <input id="filterTanggalDari" type="date" />
+      </div>
 
-            <div class="form-group">
-              <label for="filterTanggalSampai">Tanggal Akhir</label>
-              <input id="filterTanggalSampai" type="date" />
-            </div>
+      <div class="form-group">
+        <label for="filterTanggalSampai">Tanggal Akhir</label>
+        <input id="filterTanggalSampai" type="date" />
+      </div>
 
-            <div class="form-group grow">
-              <label for="searchPetugas">Pilih Petugas (NIPPOS / NIK)</label>
-              <select id="searchPetugas" onchange="renderDashboard()">
-                <option value="">Semua Petugas</option>
-              </select>
-            </div>
+      <div class="form-group grow">
+        <label for="searchPetugas">Pilih Petugas (NIPPOS / NIK)</label>
+        <select id="searchPetugas" onchange="renderDashboard()">
+          <option value="">Semua Petugas</option>
+        </select>
+      </div>
+
+    </div>
+
+    <!-- Ringkasan KPI -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-title">Total Pendapatan (Total Bea)</div>
+        <div class="kpi-value" id="kpiPendapatan">Rp 0</div>
+        <div class="kpi-sub" id="kpiOngkir">Ongkir: Rp 0 | HTNB: Rp 0</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-title">Total Produksi Resi</div>
+        <div class="kpi-value" id="kpiResi">0 Resi</div>
+        <div class="kpi-sub" id="kpiJenis">Paket: 0 | Dokumen: 0</div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-title">Total Berat Kiriman</div>
+        <div class="kpi-value" id="kpiBerat">0,00 Kg</div>
+        <div class="kpi-sub" id="kpiRataBerat">Rata-rata: 0,00 Kg / resi</div>
+      </div>
+      <div class="kpi-card dark">
+        <div class="kpi-title">Petugas Entri Aktif</div>
+        <div class="kpi-value" id="kpiPetugas">0 Orang</div>
+        <div class="kpi-sub" id="kpiTopPetugas">Tertinggi: -</div>
+      </div>
+    </div>
+
+    <!-- Grafik Perbandingan -->
+    <div class="chart-card">
+      <div class="section-header">
+        <h2>Grafik Total Pendapatan per Petugas Entri</h2>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="revenueChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="section-header">
+        <h2>Grafik Jumlah Transaksi per Petugas Entri</h2>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="transactionCountChart"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="section-header">
+        <h2>Perbandingan Transaksi per Layanan Tahun 2026</h2>
+        <div class="service-filter">
+          <label for="serviceProductionFilter">Pilih Layanan</label>
+          <select id="serviceProductionFilter" onchange="renderDashboard()">
+            <option value="">Semua Layanan</option>
+          </select>
+        </div>
+        <span class="chart-summary" id="serviceProductionSummary">Memuat Januari–Desember 2026...</span>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="serviceMonthlyChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Tabel Rekap Karyawan -->
+    <div class="table-card">
+      <div class="table-top">
+        <h2 style="font-size: 1.05rem;">Rekapitulasi Transaksi per Karyawan</h2>
+        <span style="font-size: 0.82rem; color: var(--muted);" id="tableCount">Menampilkan 0 data</span>
+      </div>
+
+      <div id="loadingState" class="state-box">
+        <div class="spinner"></div>
+        <p>Mengambil data dari Google Sheets...</p>
+      </div>
+
+      <div class="table-responsive" id="tableContainer" style="display: none;">
+        <table>
+          <thead>
+            <tr>
+              <th class="text-center">No</th>
+              <th>NIPPOS / NIK</th>
+              <th>Nama Petugas Entri</th>
+              <th class="text-right">Total Resi</th>
+              <th class="text-right">Paket</th>
+              <th class="text-right">Dokumen</th>
+              <th class="text-right">Berat (Kg)</th>
+              <th class="text-right">Total Ongkir</th>
+              <th class="text-right">Total Bea</th>
+              <th>Rincian Layanan</th>
+              <th class="text-center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="rekapTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" id="monthlyReportView" hidden>
+    <div class="monthly-filter">
+      <div class="monthly-field">
+        <label for="reportBulan">Bulan Transaksi</label>
+        <select id="reportBulan">
+          <option value="1">Januari</option>
+          <option value="2">Februari</option>
+          <option value="3">Maret</option>
+          <option value="4">April</option>
+          <option value="5">Mei</option>
+          <option value="6">Juni</option>
+          <option value="7">Juli</option>
+          <option value="8">Agustus</option>
+          <option value="9">September</option>
+          <option value="10">Oktober</option>
+          <option value="11">November</option>
+          <option value="12">Desember</option>
+        </select>
+      </div>
+      <div class="monthly-field">
+        <label for="reportTahun">Tahun</label>
+        <select id="reportTahun"></select>
+      </div>
+      <div class="monthly-field grow">
+        <label for="reportNipNik">Pilih NIPPOS / NIK</label>
+        <select id="reportNipNik">
+          <option value="">Memuat daftar petugas...</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="monthlySummaryPage">
+      <p class="monthly-report-message" id="monthlyReportMessage" role="status" aria-live="polite"></p>
+
+      <div class="monthly-report-card">
+        <div class="monthly-report-heading">
+          <h2>Rekap Transaksi Pengiriman Dokumen dan Paket</h2>
+          <div class="monthly-report-meta">
+            <span>Nama Mitra</span><span id="reportNama">: -</span>
+            <span>ID Mitra</span><span id="reportId">: -</span>
+            <span>Periode Transaksi</span><span id="reportPeriode">: -</span>
           </div>
+        </div>
+        <div class="table-responsive">
+          <table class="monthly-table">
+            <thead>
+              <tr>
+                <th class="center">No</th>
+                <th>Tgl Transaksi</th>
+                <th class="number">Jml Transaksi</th>
+                <th class="number">Biaya Pengiriman</th>
+                <th class="number">PPN</th>
+                <th class="number">HTNB</th>
+                <th class="number">Total Biaya Pengiriman</th>
+              </tr>
+            </thead>
+            <tbody id="monthlyReportRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
-          <!-- Ringkasan KPI (dengan animasi count-up V35) -->
-          <div class="kpi-grid">
-            <div class="kpi-card">
-              <div class="kpi-title">Total Pendapatan (Total Bea)</div>
-              <div class="kpi-value" id="kpiPendapatan">Rp 0</div>
-              <div class="kpi-sub" id="kpiOngkir">Ongkir: Rp 0 | HTNB: Rp 0</div>
-            </div>
-            <div class="kpi-card blue" style="animation-delay: 0.06s;">
-              <div class="kpi-title">Total Produksi Resi</div>
-              <div class="kpi-value" id="kpiResi">0 Resi</div>
-              <div class="kpi-sub" id="kpiJenis">Paket: 0 | Dokumen: 0</div>
-            </div>
-            <div class="kpi-card green" style="animation-delay: 0.12s;">
-              <div class="kpi-title">Total Berat Kiriman</div>
-              <div class="kpi-value" id="kpiBerat">0,00 Kg</div>
-              <div class="kpi-sub" id="kpiRataBerat">Rata-rata: 0,00 Kg / resi</div>
-            </div>
-            <div class="kpi-card dark" style="animation-delay: 0.18s;">
-              <div class="kpi-title">Petugas Entri Aktif</div>
-              <div class="kpi-value" id="kpiPetugas">0 Orang</div>
-              <div class="kpi-sub" id="kpiTopPetugas">Tertinggi: -</div>
-            </div>
+    <div id="transactionDetailsPage" hidden>
+      <p class="monthly-report-message" id="monthlyDetailMessage" role="status" aria-live="polite"></p>
+      <div class="monthly-report-card">
+        <div class="monthly-report-heading">
+          <h2>Rincian Transaksi Pengiriman</h2>
+          <div class="monthly-report-meta">
+            <span>Nama Mitra</span><span id="detailReportNama">: -</span>
+            <span>ID Mitra</span><span id="detailReportId">: -</span>
+            <span>Periode Transaksi</span><span id="detailReportPeriode">: -</span>
           </div>
-
-          <!-- Grafik Perbandingan -->
-          <div class="chart-card">
-            <div class="section-header">
-              <h2>Grafik Total Pendapatan per Petugas Entri</h2>
+        </div>
+        <div class="monthly-detail-toolbar">
+          <h3 id="monthlyDetailCount">Memuat transaksi...</h3>
+          <div class="monthly-detail-filters">
+            <div class="monthly-detail-filter">
+              <label for="monthlyDetailDateFrom">Tanggal Dari</label>
+              <input type="date" id="monthlyDetailDateFrom" />
             </div>
-            <div class="chart-wrapper">
-              <canvas id="revenueChart"></canvas>
+            <div class="monthly-detail-filter">
+              <label for="monthlyDetailDateTo">Tanggal Sampai</label>
+              <input type="date" id="monthlyDetailDateTo" />
             </div>
-          </div>
-
-          <div class="chart-card">
-            <div class="section-header">
-              <h2>Grafik Jumlah Transaksi per Petugas Entri</h2>
-            </div>
-            <div class="chart-wrapper">
-              <canvas id="transactionCountChart"></canvas>
-            </div>
-          </div>
-
-          <div class="chart-card">
-            <div class="section-header">
-              <h2>Perbandingan Transaksi per Layanan Tahun 2026</h2>
-              <div class="service-filter">
-                <label for="serviceProductionFilter">Pilih Layanan</label>
-                <select id="serviceProductionFilter" onchange="changeServiceProduction()">
-                  <option value="">Semua Layanan</option>
-                </select>
-              </div>
-              <span class="chart-summary" id="serviceProductionSummary">Memuat Januari–Desember 2026...</span>
-            </div>
-            <div class="chart-wrapper">
-              <canvas id="serviceMonthlyChart"></canvas>
-              <div class="chart-loading" id="serviceMonthlyLoading" role="status">
-                <div class="spinner"></div>
-                <span>Menyiapkan data per bulan...</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Tabel Rekap Karyawan -->
-          <div class="table-card">
-            <div class="table-top">
-              <h2 style="font-size: 1.05rem;">Rekapitulasi Transaksi per Karyawan</h2>
-              <span style="font-size: 0.82rem; color: var(--muted);" id="tableCount">Menampilkan 0 data</span>
-            </div>
-
-            <div id="loadingState" class="state-box">
-              <div class="spinner"></div>
-              <p>Mengambil data dari Google Sheets...</p>
-            </div>
-
-            <div class="table-responsive" id="tableContainer" style="display: none;">
-              <table>
-                <thead>
-                  <tr>
-                    <th class="text-center">No</th>
-                    <th>NIPPOS / NIK</th>
-                    <th>Nama Petugas Entri</th>
-                    <th class="text-right">Total Resi</th>
-                    <th class="text-right">Paket</th>
-                    <th class="text-right">Dokumen</th>
-                    <th class="text-right">Berat (Kg)</th>
-                    <th class="text-right">Total Ongkir</th>
-                    <th class="text-right">Total Bea</th>
-                    <th>Rincian Layanan</th>
-                    <th class="text-center">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody id="rekapTableBody"></tbody>
-              </table>
+            <div class="monthly-detail-filter">
+              <label for="monthlyDetailSearch">Pencarian</label>
+              <input type="search" id="monthlyDetailSearch" placeholder="Cari resi, pengirim, penerima, atau kota..." />
             </div>
           </div>
         </div>
-
-        <div class="container v35-animate" id="monthlyReportView" hidden>
-          <div class="monthly-filter">
-            <div class="monthly-field">
-              <label for="reportBulan">Bulan Transaksi</label>
-              <select id="reportBulan">
-                <option value="1">Januari</option>
-                <option value="2">Februari</option>
-                <option value="3">Maret</option>
-                <option value="4">April</option>
-                <option value="5">Mei</option>
-                <option value="6">Juni</option>
-                <option value="7">Juli</option>
-                <option value="8">Agustus</option>
-                <option value="9">September</option>
-                <option value="10">Oktober</option>
-                <option value="11">November</option>
-                <option value="12">Desember</option>
-              </select>
-            </div>
-            <div class="monthly-field">
-              <label for="reportTahun">Tahun</label>
-              <select id="reportTahun"></select>
-            </div>
-            <div class="monthly-field grow">
-              <label for="reportNipNik">Pilih NIPPOS / NIK</label>
-              <select id="reportNipNik">
-                <option value="">Memuat daftar petugas...</option>
-              </select>
-            </div>
-          </div>
-
-          <div id="monthlySummaryPage">
-            <p class="monthly-report-message" id="monthlyReportMessage" role="status" aria-live="polite"></p>
-
-            <div class="monthly-report-card">
-              <div class="monthly-report-heading">
-                <h2>Rekap Transaksi Pengiriman Dokumen dan Paket</h2>
-                <div class="monthly-report-meta">
-                  <span>Nama Mitra</span><span id="reportNama">: -</span>
-                  <span>ID Mitra</span><span id="reportId">: -</span>
-                  <span>Periode Transaksi</span><span id="reportPeriode">: -</span>
-                </div>
-              </div>
-              <div class="table-responsive">
-                <table class="monthly-table">
-                  <thead>
-                    <tr>
-                      <th class="center">No</th>
-                      <th>Tgl Transaksi</th>
-                      <th class="number">Jml Transaksi</th>
-                      <th class="number">Biaya Pengiriman</th>
-                      <th class="number">PPN</th>
-                      <th class="number">HTNB</th>
-                      <th class="number">Total Biaya Pengiriman</th>
-                    </tr>
-                  </thead>
-                  <tbody id="monthlyReportRows"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <div id="transactionDetailsPage" hidden>
-            <p class="monthly-report-message" id="monthlyDetailMessage" role="status" aria-live="polite"></p>
-            <div class="monthly-report-card">
-              <div class="monthly-report-heading">
-                <h2>Rincian Transaksi Pengiriman</h2>
-                <div class="monthly-report-meta">
-                  <span>Nama Mitra</span><span id="detailReportNama">: -</span>
-                  <span>ID Mitra</span><span id="detailReportId">: -</span>
-                  <span>Periode Transaksi</span><span id="detailReportPeriode">: -</span>
-                </div>
-              </div>
-              <div class="monthly-detail-toolbar">
-                <h3 id="monthlyDetailCount">Memuat transaksi...</h3>
-                <div class="monthly-detail-filters">
-                  <div class="monthly-detail-filter">
-                    <label for="monthlyDetailDateFrom">Tanggal Dari</label>
-                    <input type="date" id="monthlyDetailDateFrom" />
-                  </div>
-                  <div class="monthly-detail-filter">
-                    <label for="monthlyDetailDateTo">Tanggal Sampai</label>
-                    <input type="date" id="monthlyDetailDateTo" />
-                  </div>
-                  <div class="monthly-detail-filter">
-                    <label for="monthlyDetailSearch">Pencarian</label>
-                    <input type="search" id="monthlyDetailSearch" placeholder="Cari resi, pengirim, penerima, atau kota..." />
-                  </div>
-                </div>
-              </div>
-              <div class="table-responsive">
-                <table class="monthly-table">
-                  <thead>
-                    <tr>
-                      <th class="center">No</th>
-                      <th>No Resi</th>
-                      <th>Tgl Transaksi</th>
-                      <th>Layanan</th>
-                      <th>Jenis</th>
-                      <th>Pengirim</th>
-                      <th>Penerima</th>
-                      <th>Kota Tujuan</th>
-                      <th class="number">Berat (Kg)</th>
-                      <th class="number">Total Bea</th>
-                    </tr>
-                  </thead>
-                  <tbody id="monthlyDetailRows"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+        <div class="table-responsive">
+          <table class="monthly-table">
+            <thead>
+              <tr>
+                <th class="center">No</th>
+                <th>No Resi</th>
+                <th>Tgl Transaksi</th>
+                <th>Layanan</th>
+                <th>Jenis</th>
+                <th>Pengirim</th>
+                <th>Penerima</th>
+                <th>Kota Tujuan</th>
+                <th class="number">Berat (Kg)</th>
+                <th class="number">Total Bea</th>
+              </tr>
+            </thead>
+            <tbody id="monthlyDetailRows"></tbody>
+          </table>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <section class="container v35-animate" id="csvUploadView" hidden>
-          <div class="upload-card">
-            <h2>Upload data transaksi ke Database</h2>
-            <p class="upload-description">
-              Pilih satu atau beberapa file CSV transaksi (maksimal 5 MB per file). File harus menggunakan pemisah titik koma (;) dan baris header sesuai nama kolom tabel.
-              Semua data baru akan disimpan. Data dengan nomor resi yang sudah ada akan dilewati.
-            </p>
-            <form class="upload-form" id="csvUploadForm">
-              <label for="csvUploadFile">File CSV</label>
-              <input id="csvUploadFile" type="file" accept=".csv,text/csv" multiple required />
-              <button class="upload-submit" id="csvUploadButton" type="submit">Upload ke Database</button>
-              <p class="upload-message" id="csvUploadMessage" role="status" aria-live="polite"></p>
-            </form>
-          </div>
-        </section>
+  <section class="container" id="csvUploadView" hidden>
+    <div class="upload-card">
+      <h2>Upload data transaksi ke Database</h2>
+      <p class="upload-description">
+        Pilih satu atau beberapa file CSV transaksi (maksimal 5 MB per file). File harus menggunakan pemisah titik koma (;) dan baris header sesuai nama kolom tabel.
+        Semua data baru akan disimpan. Data dengan nomor resi yang sudah ada akan dilewati.
+      </p>
+      <form class="upload-form" id="csvUploadForm">
+        <label for="csvUploadFile">File CSV</label>
+        <input id="csvUploadFile" type="file" accept=".csv,text/csv" multiple required />
+        <button class="upload-submit" id="csvUploadButton" type="submit">Upload ke Database</button>
+        <p class="upload-message" id="csvUploadMessage" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
 
       </main>
     </div>
@@ -1707,7 +1336,7 @@
       <div class="modal-header">
         <div>
           <h3 id="modalTitle" style="font-size: 1.1rem;">Detail Transaksi Petugas</h3>
-          <p id="modalSubtitle" style="font-size: 0.82rem; color: #e0e7ff;">NIPPOS: -</p>
+          <p id="modalSubtitle" style="font-size: 0.82rem; color: #cbd5e1;">NIPPOS: -</p>
         </div>
         <button class="modal-close" onclick="closeModal()">&times;</button>
       </div>
@@ -1750,7 +1379,7 @@
       <div class="modal-header">
         <div>
           <h3 style="font-size: 1.1rem;">Pengunjung Aktif</h3>
-          <p style="font-size: 0.82rem; color: #e0e7ff;">Pengguna yang aktif dalam 2 menit terakhir</p>
+          <p style="font-size: 0.82rem; color: #cbd5e1;">Pengguna yang aktif dalam 2 menit terakhir</p>
         </div>
         <button class="modal-close" onclick="closeVisitorModal()">&times;</button>
       </div>
@@ -1774,8 +1403,6 @@
       '984413376'
     ]);
     let allRekapData = [];
-    let currentUser = null;
-    let canViewAllData = false;
     let currentDetailData = [];
     let chartInstance = null;
     let transactionCountChartInstance = null;
@@ -1795,8 +1422,6 @@
     let visitorPresenceInterval = null;
     let visitorStatsInterval = null;
 
-    const kpiAnimFrames = new WeakMap();
-
     const formatRupiah = (angka) => {
       return new Intl.NumberFormat('id-ID', {
         style: 'currency',
@@ -1811,32 +1436,6 @@
         maximumFractionDigits: desimal
       }).format(angka || 0);
     };
-
-    // Animasi angka naik halus ala KPI Dashboard V35
-    function animateKpiValue(el, targetValue, formatter, duration = 650) {
-      if (!el) return;
-      const prevFrame = kpiAnimFrames.get(el);
-      if (prevFrame) cancelAnimationFrame(prevFrame);
-
-      const startTime = performance.now();
-      const target = Number(targetValue) || 0;
-
-      const step = (now) => {
-        const progress = Math.min((now - startTime) / duration, 1);
-        const eased = 1 - Math.pow(1 - progress, 3);
-        const current = target * eased;
-        el.textContent = formatter(progress < 1 ? current : target);
-
-        if (progress < 1) {
-          kpiAnimFrames.set(el, requestAnimationFrame(step));
-        } else {
-          kpiAnimFrames.delete(el);
-        }
-      };
-
-      kpiAnimFrames.set(el, requestAnimationFrame(step));
-    }
-
     const formatNamaPetugas = (namaPetugas) =>
       String(namaPetugas || '-').toLocaleUpperCase('id-ID');
 
@@ -1949,32 +1548,16 @@
     }
 
     function showAuthenticatedApp(user) {
-      currentUser = user || {};
       document.getElementById('loginView').hidden = true;
       document.getElementById('appLayout').hidden = false;
-      const role = String(currentUser.role || '').trim().toLowerCase();
-      canViewAllData = role === 'superuser' || role === 'admin';
-      const canManageFiles = canViewAllData;
+      const role = String(user && user.role || '').trim().toLowerCase();
+      const canManageFiles = role === 'superuser' || role === 'admin';
       const isSuperuser = role === 'superuser';
       document.getElementById('uploadNavButton').hidden = !canManageFiles;
       document.getElementById('visitorStatCard').hidden = !isSuperuser;
       document.getElementById('topbarUser').textContent =
-        currentUser.displayName || currentUser.username || 'DATA TRX ORANGER';
+        user && (user.displayName || user.username) || 'DATA TRX ORANGER';
       startVisitorPresence(isSuperuser);
-    }
-
-    function normalizeUserIdentity(value) {
-      return String(value || '').replace(/^'/, '').trim().toLowerCase().replace(/\s+/g, ' ');
-    }
-
-    function isCurrentUserRecord(record) {
-      if (canViewAllData) return true;
-      const userNipNik = normalizeUserIdentity(currentUser && currentUser.username);
-      const userName = normalizeUserIdentity(currentUser && currentUser.displayName);
-      const recordNipNik = normalizeUserIdentity(record && record.nipNik);
-      const recordName = normalizeUserIdentity(record && record.namaPetugas);
-      return (userNipNik && recordNipNik === userNipNik) ||
-        (userName && recordName === userName);
     }
 
     function startVisitorPresence(isSuperuser) {
@@ -2731,7 +2314,7 @@
           throw new Error('Apps Script belum mendukung filter tanggal. Deploy versi terbaru googlescript.js.');
         }
 
-        allRekapData = (result.data || []).filter(isCurrentUserRecord);
+        allRekapData = result.data || [];
         populatePetugasOptions(allRekapData);
         renderDashboard();
         if (!serviceMonthlyData.length && !serviceMonthlyLoading) {
@@ -2767,19 +2350,25 @@
         totalBerat += item.totalBerat;
       });
 
-      animateKpiValue(document.getElementById('kpiPendapatan'), totalPendapatan, formatRupiah);
+      document.getElementById('kpiPendapatan').textContent = formatRupiah(totalPendapatan);
       document.getElementById('kpiOngkir').textContent = `Ongkir: ${formatRupiah(totalOngkir)} | HTNB: ${formatRupiah(totalHtnb)}`;
 
-      animateKpiValue(document.getElementById('kpiResi'), totalResi, v => `${formatAngka(v)} Resi`);
+      document.getElementById('kpiResi').textContent = `${formatAngka(totalResi)} Resi`;
       document.getElementById('kpiJenis').textContent = `Paket: ${formatAngka(totalPaket)} | Dokumen: ${formatAngka(totalDokumen)}`;
 
       const rataBerat = totalResi > 0 ? (totalBerat / totalResi) : 0;
-      animateKpiValue(document.getElementById('kpiBerat'), totalBerat, v => `${formatAngka(v, 2)} Kg`);
+      document.getElementById('kpiBerat').textContent = `${formatAngka(totalBerat, 2)} Kg`;
       document.getElementById('kpiRataBerat').textContent = `Rata-rata: ${formatAngka(rataBerat, 2)} Kg / resi`;
 
-      animateKpiValue(document.getElementById('kpiPetugas'), data.length, v => `${formatAngka(v)} Orang`);
-      document.getElementById('kpiTopPetugas').textContent = data.length > 0
-        ? `Tertinggi: ${formatNamaPetugas(data[0].namaPetugas)}`
+      document.getElementById('kpiPetugas').textContent = `${data.length} Orang`;
+      const topPetugas = data.reduce((top, item) =>
+        !top || (Number(item.totalPendapatan) || 0) > (Number(top.totalPendapatan) || 0)
+          ? item
+          : top,
+        null
+      );
+      document.getElementById('kpiTopPetugas').textContent = topPetugas
+        ? `Tertinggi: ${formatNamaPetugas(topPetugas.namaPetugas)}`
         : 'Tertinggi: -';
     }
 
@@ -2802,8 +2391,8 @@
           datasets: [{
             label: 'Total Bea / Pendapatan (Rp)',
             data: revenues,
-            backgroundColor: '#4f46e5',
-            borderRadius: 8,
+            backgroundColor: '#ea580c',
+            borderRadius: 6,
             maxBarThickness: 55
           }]
         },
@@ -2836,8 +2425,8 @@
           datasets: [{
             label: 'Jumlah Transaksi',
             data: transactionCounts,
-            backgroundColor: '#7c3aed',
-            borderRadius: 8,
+            backgroundColor: '#16a34a',
+            borderRadius: 6,
             maxBarThickness: 55
           }]
         },
@@ -2870,7 +2459,6 @@
     function getServiceTotals(data) {
       const totals = {};
       (data || []).forEach(emp => {
-        if (!isCurrentUserRecord(emp)) return;
         const nipNik = String(emp.nipNik || '').replace(/^'/, '').trim();
         if (!ALLOWED_SERVICE_NIP_NIK.has(nipNik)) return;
         Object.entries(emp.rincianLayanan || {}).forEach(([layanan, jumlah]) => {
@@ -2882,7 +2470,7 @@
     }
 
     function getServiceMonthlyTotals(selectedNipNik) {
-      return Array.from({ length: 12 }, (_, index) => getServiceTotals((serviceMonthlyData[index] || []).filter(emp =>
+      return serviceMonthlyData.map(monthData => getServiceTotals((monthData || []).filter(emp =>
         ALLOWED_SERVICE_NIP_NIK.has(String(emp.nipNik || '').replace(/^'/, '').trim()) &&
         (!selectedNipNik || String(emp.nipNik || '').replace(/^'/, '').trim() === selectedNipNik)
       )));
@@ -2901,24 +2489,26 @@
         serviceTotals[b] - serviceTotals[a] || a.localeCompare(b, 'id')
       );
       const displayedLayanan = selectedService ? [selectedService] : layanan;
-      const colors = ['#4f46e5', '#7c3aed', '#0284c7', '#16a34a', '#ea580c', '#ca8a04', '#dc2626', '#475569'];
+      const colors = ['#2563eb', '#ea580c', '#16a34a', '#9333ea', '#0891b2', '#ca8a04', '#dc2626', '#475569'];
       const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 
-      const chartData = {
-        labels: monthLabels,
-        datasets: displayedLayanan.map((namaLayanan, index) => ({
-          label: namaLayanan,
-          data: monthlyTotals.map(month => month[namaLayanan] || 0),
-          borderColor: colors[Math.max(0, layanan.indexOf(namaLayanan)) % colors.length],
-          backgroundColor: colors[Math.max(0, layanan.indexOf(namaLayanan)) % colors.length],
-          borderWidth: 2.2,
-          pointRadius: 3.5,
-          pointHoverRadius: 5.5,
-          tension: 0.3,
-          fill: false
-        }))
-      };
-      const chartOptions = {
+      serviceProductionChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: monthLabels,
+          datasets: displayedLayanan.map((namaLayanan, index) => ({
+            label: namaLayanan,
+            data: monthlyTotals.map(month => month[namaLayanan] || 0),
+            borderColor: colors[Math.max(0, layanan.indexOf(namaLayanan)) % colors.length],
+            backgroundColor: colors[Math.max(0, layanan.indexOf(namaLayanan)) % colors.length],
+            borderWidth: 2,
+            pointRadius: 3,
+            pointHoverRadius: 5,
+            tension: 0.25,
+            fill: false
+          }))
+        },
+        options: {
           responsive: true,
           maintainAspectRatio: false,
           interaction: { mode: 'index', intersect: false },
@@ -2938,19 +2528,8 @@
             },
             x: { title: { display: true, text: 'Bulan 2026' } }
           }
-        };
-
-      if (serviceProductionChartInstance) {
-        serviceProductionChartInstance.data = chartData;
-        serviceProductionChartInstance.options = chartOptions;
-        serviceProductionChartInstance.update('none');
-      } else {
-        serviceProductionChartInstance = new Chart(ctx, {
-          type: 'line',
-          data: chartData,
-          options: chartOptions
-        });
-      }
+        }
+      });
 
       const total = displayedLayanan.reduce((sum, service) => sum + (serviceTotals[service] || 0), 0);
       const summary = document.getElementById('serviceProductionSummary');
@@ -2959,16 +2538,6 @@
           ? `${formatAngka(total)} transaksi untuk layanan ${selectedService} • Januari–Desember 2026`
           : `${formatAngka(total)} transaksi dari ${layanan.length} layanan • Januari–Desember 2026`
         : 'Belum ada transaksi layanan pada tahun 2026';
-
-      const loading = document.getElementById('serviceMonthlyLoading');
-      if (loading) {
-        loading.hidden = serviceMonthlyData.length === 12 && serviceMonthlyData.every(Boolean);
-        if (!loading.hidden) {
-          const loaded = serviceMonthlyData.filter(Boolean).length;
-          loading.querySelector('span').textContent =
-            `Memuat data bulanan... ${loaded}/12 bulan selesai`;
-        }
-      }
     }
 
     function populateServiceOptions() {
@@ -2990,72 +2559,36 @@
       if (serviceNames.has(selectedService)) select.value = selectedService;
     }
 
-    function changeServiceProduction() {
-      const canvas = document.getElementById('serviceMonthlyChart');
-      if (!canvas) return;
-
-      // Jika pilihan dilakukan sebelum data bulanan selesai, mulai/lanjutkan pemuatan.
-      if (!serviceMonthlyData.some(Boolean) && !serviceMonthlyLoading) {
-        loadServiceMonthlyData(rekapRequestId);
-        return;
-      }
-
-      renderServiceMonthlyChart(canvas.getContext('2d'));
-      requestAnimationFrame(() => {
-        if (serviceProductionChartInstance) serviceProductionChartInstance.resize();
-      });
-    }
-
     async function loadServiceMonthlyData(requestId) {
       if (serviceMonthlyLoading) return;
       serviceMonthlyLoading = true;
       const monthlyRequestId = ++serviceMonthlyRequestId;
       const summary = document.getElementById('serviceProductionSummary');
-      const loading = document.getElementById('serviceMonthlyLoading');
-      serviceMonthlyData = Array(12).fill(null);
-      if (loading) {
-        loading.hidden = false;
-        loading.querySelector('span').textContent = 'Memuat data bulanan... 0/12 bulan selesai';
-      }
       summary.textContent = 'Memuat perbandingan Januari–Desember 2026 (0/12)...';
-      renderServiceMonthlyChart(document.getElementById('serviceMonthlyChart').getContext('2d'));
 
       try {
-        const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-        let nextIndex = 0;
-        const worker = async () => {
-          while (nextIndex < 12) {
-            const index = nextIndex++;
-            const month = index + 1;
-            const start = `${SERVICE_COMPARISON_YEAR}-${String(month).padStart(2, '0')}-01`;
-            const endDate = new Date(SERVICE_COMPARISON_YEAR, month, 0);
-            const end = `${SERVICE_COMPARISON_YEAR}-${String(month).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
-            try {
-              const result = await callDashboardApi('rekap', {
-                tanggalDari: start,
-                tanggalSampai: end
-              }, 60000);
-              if (requestId !== rekapRequestId || monthlyRequestId !== serviceMonthlyRequestId) return;
-              serviceMonthlyData[index] = result.data || [];
-              const loaded = serviceMonthlyData.filter(Boolean).length;
-              summary.textContent = `Memuat perbandingan Januari–Desember 2026 (${loaded}/12)...`;
-              if (loading) loading.querySelector('span').textContent = `${monthNames[index]} selesai — memuat ${loaded}/12 bulan`;
-              populateServiceOptions();
-              renderServiceMonthlyChart(document.getElementById('serviceMonthlyChart').getContext('2d'));
-            } catch (monthError) {
-              console.warn(`Gagal memuat ${monthNames[index]}:`, monthError);
-              serviceMonthlyData[index] = [];
-            }
-          }
-        };
-        await Promise.all(Array.from({ length: 4 }, worker));
+        const monthlyData = [];
+        for (let index = 0; index < 12; index += 1) {
+          const month = index + 1;
+          const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'][index];
+          const start = `${SERVICE_COMPARISON_YEAR}-${String(month).padStart(2, '0')}-01`;
+          const endDate = new Date(SERVICE_COMPARISON_YEAR, month, 0);
+          const end = `${SERVICE_COMPARISON_YEAR}-${String(month).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}`;
+          summary.textContent = `Memuat ${monthName} ${SERVICE_COMPARISON_YEAR} (${index + 1}/12)...`;
+          const result = await callDashboardApi('rekap', {
+            tanggalDari: start,
+            tanggalSampai: end
+          }, 60000);
+          monthlyData.push(result.data || []);
+        }
+        serviceMonthlyData = monthlyData;
         if (requestId !== rekapRequestId || monthlyRequestId !== serviceMonthlyRequestId) return;
-        summary.textContent = 'Perbandingan transaksi layanan Januari–Desember 2026 siap';
-        if (loading) loading.hidden = true;
+        populateServiceOptions();
+        renderDashboard();
       } catch (error) {
         if (requestId !== rekapRequestId || monthlyRequestId !== serviceMonthlyRequestId) return;
+        serviceMonthlyData = [];
         summary.textContent = `Gagal memuat perbandingan layanan 2026: ${error.message}`;
-        if (loading) loading.hidden = true;
       } finally {
         serviceMonthlyLoading = false;
       }
@@ -3098,7 +2631,12 @@
       const selectedNipNik = document.getElementById('searchPetugas').value;
       const filtered = allRekapData.filter(emp =>
         !selectedNipNik || String(emp.nipNik || '').trim() === selectedNipNik
-      );
+      ).sort((a, b) => {
+        const pendapatanA = Number(a.totalPendapatan) || 0;
+        const pendapatanB = Number(b.totalPendapatan) || 0;
+        return pendapatanB - pendapatanA ||
+          String(a.namaPetugas || '').localeCompare(String(b.namaPetugas || ''), 'id');
+      });
 
       updateKPI(filtered);
       renderChart(filtered);
